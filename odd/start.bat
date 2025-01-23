@@ -1,0 +1,1 @@
+cls && cd C:\Users\petit-demon\Downloads\film\backend && node server.js
