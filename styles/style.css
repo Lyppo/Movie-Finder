@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    justify-items: center;
+    align-items: center;
+}
+
+img {
+    margin: 5%;
+    border: black 2px solid;
+    width: 25%;
+    grid-column: 1 / -1;
+}
+
+button {
+    margin: 10px auto;
+}
