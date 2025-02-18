@@ -116,4 +116,6 @@ async function login(event) {
     }
 }
 
+document.getElementById("btnLogin").addEventListener("click", login); // Ajoute un écouteur d'événement au bouton
+
 // rajouter l'autentification v3
