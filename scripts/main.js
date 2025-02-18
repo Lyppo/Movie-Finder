@@ -1,11 +1,17 @@
 // Fonction pour créer un token de demande
 async function createRequestToken() {
     try {
+        redirect_to = window.location.href; // Récupère l'URL actuelle
+        if (redirect_to.endsWith("index.html")) {
+            // Redirige vers l'URL sans "index.html"
+            redirect_to = redirect_to.replace("index.html", "");
+        }
+
         // Envoie une requête POST pour obtenir un token de demande
         const response = await fetch('https://tmdb-proxy-request.antodu72210.workers.dev', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ redirect_to: window.location.origin + "/popup.html" }) , // Utilisation de JSON.stringify pour structurer le corps
+            body: JSON.stringify({ redirect_to: redirect_to + "/popup.html" }) , // Utilisation de JSON.stringify pour structurer le corps
         });
 
         // Vérifie si la réponse est ok (status 200-299)
