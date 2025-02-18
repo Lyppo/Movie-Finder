@@ -1,45 +1,119 @@
+// Fonction pour créer un token de demande
 async function createRequestToken() {
-    const url = 'https://tmdb-proxy.antodu72210.workers.dev/';
-  
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-  
-    if (!response.ok) {
-      return -1;
+    try {
+        // Envoie une requête POST pour obtenir un token de demande
+        const response = await fetch('https://tmdb-proxy-request.antodu72210.workers.dev', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ redirect_to: window.location.origin + "/popup.html" }) , // Utilisation de JSON.stringify pour structurer le corps
+        });
+
+        // Vérifie si la réponse est ok (status 200-299)
+        if (!response.ok) {
+            throw new Error('Erreur lors de la création du token de demande.');
+        }
+
+        const data = await response.json(); // Récupère un objet JSON
+        return data.request_token;  // Retourne uniquement le request_token
+    } catch (error) {
+        console.error(error.message); // Affiche les erreurs en cas d'échec
+        return -1;
     }
-
-    return await response.text();;  // Retourne la réponse du Worker
 }
 
-async function login(event) {
-    
-    tmpToken = await createRequestToken();
-    
-    ouvrirPopupCentre(tmpToken);
+// Fonction pour créer un token d'accès (implémentation à venir)
+async function createAccessToken(tmpToken) {
+    console.log("Création du token d'accès...");try {
+    const response = await fetch('https://tmdb-proxy-create.antodu72210.workers.dev/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ request_token: tmpToken })
+        });
 
-    console.log(tmpToken);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Erreur lors de la récupération de l'Access Token.");
+        }
+
+        console.log("✅ Access Token :", data.access_token);
+        console.log("✅ Account ID :", data.account_id);
+
+        test(data); // Appel de la fonction test avec les données récupérées
+
+        return data;
+
+    } catch (error) {
+        console.error("❌ Erreur :", error.message);
+        return null;
+    }
 }
 
-function ouvrirPopupCentre(TON_REQUEST_TOKEN) {
-    let width = 640;
-    let height = 360;
-    let left = (screen.width - width) / 2;
-    let top = (screen.height - height) / 2;
+// Fonction pour ouvrir une fenêtre popup et attendre l'authentification
+async function ouvrirPopupCentre(TON_REQUEST_TOKEN) {
+    return new Promise((resolve) => {
+        if (!TON_REQUEST_TOKEN) {
+            console.error("Erreur : request_token manquant !");
+            resolve(false); // Sortie en cas d'erreur
+            return;
+        }
 
-    const popup = window.open("https://www.themoviedb.org/auth/access?request_token=" + TON_REQUEST_TOKEN, "popupLogin", `width=${width},height=${height},top=${top},left=${left}`);
+        const width = 640;
+        const height = 360;
+        const left = (screen.width - width) / 2;
+        const top = (screen.height - height) / 2;
 
-    // Vérifier les messages venant de la popup
-    window.addEventListener("message", (event) => {
-        // S'assurer que le message provient de la bonne origine
-        if (event.origin === "https://www.themoviedb.org") {
-            if (event.data === "approved") {
-                alert("L'authentification est réussie, la popup va se fermer.");
-                popup.close();  // Fermer la popup
+        // Ouvre la popup
+        const popup = window.open(
+            `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(TON_REQUEST_TOKEN)}`,
+            "popupLogin",
+            `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,menubar=no,toolbar=no,location=no,status=no`
+        );
+
+        if (!popup) {
+            console.error("Impossible d'ouvrir la popup (bloquée par le navigateur ?)");
+            resolve(false);
+            return;
+        }
+
+        // Ajoute un écouteur pour attendre le message de validation
+        function messageListener(event) {
+            if (event.origin !== window.location.origin) {
+                console.error("Origine non autorisée !");
+                resolve(false);
+                return;
+            }
+
+            if (event.data === "authenticated") {
+                console.log("Utilisateur authentifié.");
+                window.removeEventListener("message", messageListener); // Nettoie l'écouteur
+                resolve(true);
             }
         }
+
+        window.addEventListener("message", messageListener);
     });
 }
 
-document.getElementById("btnLogin").addEventListener("click", login);
+// Fonction pour gérer le processus de connexion
+async function login(event) {
+    event.preventDefault(); // Empêche le comportement par défaut du bouton
+
+    const tmpToken = await createRequestToken(); // Crée un token de demande
+
+    if (tmpToken === -1) {
+        console.error("Erreur lors de la création du token de demande !");
+        return;
+    }
+
+    // Attend que l'utilisateur s'authentifie avant d'exécuter la suite
+    const autentified = await ouvrirPopupCentre(tmpToken);
+
+    if (autentified) {
+       data = await createAccessToken(tmpToken); // Crée un token d'accès si authentifié
+    } else { 
+        console.error("Erreur lors de l'authentification !");
+    }
+}
+
+// rajouter l'autentification v3
