@@ -1,7 +1,7 @@
 // api.js
 export async function requestauth(url, content) {
     try {
-        const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
+        const response = await fetch('https://tmdb-request-debug.antodu72210.workers.dev/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -28,6 +28,8 @@ export async function request(account_id, accessToken) {
         console.error("L'URL doit concerner le site api.themoviedb.org.");
         return null; // Renvoie une erreur
     }*/
+
+        // retravailler ça
 
     try {
         // Envoie la requête à l'API TMDB
