@@ -1,58 +1,48 @@
 // Fonction pour créer un token de demande
 async function createRequestToken() {
-    try {
-        redirect_to = window.location.href; // Récupère l'URL actuelle
-        if (redirect_to.endsWith("index.html")) {
-            // Redirige vers l'URL sans "index.html"
-            redirect_to = redirect_to.replace("index.html", "");
-        }
+    redirect_to = window.location.href; // Récupère l'URL actuelle
 
-        // Envoie une requête POST pour obtenir un token de demande
-        const response = await fetch('https://tmdb-proxy-request.antodu72210.workers.dev', {
+    if (redirect_to.endsWith("index.html")) {redirect_to = redirect_to.replace("index.html", "")}
+    
+    data = await request('https://api.themoviedb.org/4/auth/request_token',
+        {redirect_to: redirect_to + "/popup.html"}
+    );
+
+    return data.request_token;
+}
+
+async function request(url, content) {
+    try {
+        const response = await fetch('https://tmdb-request.antodu72210.workers.dev', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ redirect_to: redirect_to + "/popup.html" }) , // Utilisation de JSON.stringify pour structurer le corps
+            body: JSON.stringify({
+                url: url,
+                content: content
+            })
         });
 
-        // Vérifie si la réponse est ok (status 200-299)
         if (!response.ok) {
-            throw new Error('Erreur lors de la création du token de demande.');
+            throw new Error(`Erreur : ${response.status}`);
         }
 
         const data = await response.json(); // Récupère un objet JSON
-        return data.request_token;  // Retourne uniquement le request_token
+        return data;  // Retourne les données
     } catch (error) {
-        console.error(error.message); // Affiche les erreurs en cas d'échec
-        return -1;
+        console.error("Erreur lors de la requête :", error.message);
+        return null; // Retourne null en cas d'erreur
     }
 }
 
 // Fonction pour créer un token d'accès (implémentation à venir)
 async function createAccessToken(tmpToken) {
-    console.log("Création du token d'accès...");try {
-    const response = await fetch('https://tmdb-proxy-create.antodu72210.workers.dev/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ request_token: tmpToken })
-        });
+    console.log("Création du token d'accès...");
 
-        const data = await response.json();
+    data = await request('https://api.themoviedb.org/4/auth/access_token',
+        { request_token: tmpToken }
+    );
 
-        if (!response.ok) {
-            throw new Error(data.error || "Erreur lors de la récupération de l'Access Token.");
-        }
-
-        console.log("✅ Access Token :", data.access_token);
-        console.log("✅ Account ID :", data.account_id);
-
-        test(data); // Appel de la fonction test avec les données récupérées
-
-        return data;
-
-    } catch (error) {
-        console.error("❌ Erreur :", error.message);
-        return null;
-    }
+    return data;
 }
 
 // Fonction pour ouvrir une fenêtre popup et attendre l'authentification
@@ -103,6 +93,7 @@ async function ouvrirPopupCentre(TON_REQUEST_TOKEN) {
 
 // Fonction pour gérer le processus de connexion
 async function login(event) {
+
     event.preventDefault(); // Empêche le comportement par défaut du bouton
 
     const tmpToken = await createRequestToken(); // Crée un token de demande
@@ -117,6 +108,8 @@ async function login(event) {
 
     if (autentified) {
        data = await createAccessToken(tmpToken); // Crée un token d'accès si authentifié
+       console.log("✅ Access Token :", data.access_token);
+       console.log("✅ Account ID :", data.account_id);
     } else { 
         console.error("Erreur lors de l'authentification !");
     }
