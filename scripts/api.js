@@ -8,7 +8,7 @@ export async function requestauth(url, content) {
                 url: url,
                 content: content
             })
-        });
+        });test
 
         if (!response.ok) {
             throw new Error(`Erreur : ${response.status}`);
