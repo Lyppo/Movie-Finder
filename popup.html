@@ -7,6 +7,18 @@
     <link rel="icon" href="web-icone.ico" type="image/x-icon">
 </head>
 <body>
-    <script src="scripts/popup.js"></script>
+    <script>
+        // Vérifie si la fenêtre parent existe avant d'envoyer le message
+        if (window.opener) {
+            try {
+                window.opener.postMessage("authenticated", window.location.origin);
+            } catch (error) {
+                console.error("Erreur lors de l'envoi du message à la fenêtre parente :", error);
+            }
+        } else {
+            console.error("La fenêtre parente n'existe pas.");
+        }
+        window.close();
+    </script>
 </body>
 </html>
