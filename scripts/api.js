@@ -1,7 +1,7 @@
 // api.js
 export async function requestauth(url, content) {
     try {
-        const response = await fetch('https://tmdb-request-debug.antodu72210.workers.dev/', {
+        const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
