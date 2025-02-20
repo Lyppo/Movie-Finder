@@ -1,7 +1,9 @@
-# Project Title: Web Page Project
+architecture pas à jour
+
+# Project Title: Movie Finder
 
 ## Description
-This project is a simple web page that displays a default image centered on the page. The image is sourced from the "images" folder and is displayed in a 2/3 aspect ratio. The project includes a stylesheet for styling and a JavaScript file for functionality.
+Movie Finder est une application web simple qui affiche une image par défaut centrée sur la page. L'image est accompagnée de boutons permettant d'ajouter le film aux favoris ou de passer au film suivant. Le projet inclut une feuille de style pour le design et un fichier JavaScript pour les fonctionnalités interactives.
 
 ## Project Structure
 ```
@@ -18,16 +20,21 @@ web-page-project
 
 ## Files Overview
 
-- **index.html**: The main HTML file that displays the image.
-- **styles/style.css**: Contains CSS rules to center the image and maintain the 2/3 aspect ratio.
-- **scripts/main.js**: An empty JavaScript file that logs "Hello World" to the console.
-- **images/default.jpg**: The default image displayed on the web page.
+- **index.html**: Le fichier HTML principal qui affiche l'image par défaut et les boutons.
+- **nouvelle-page.html**: Un fichier HTML supplémentaire avec une structure similaire pour une nouvelle page.
+- **styles/style.css**: Contient les règles CSS pour centrer l'image, styliser les boutons et ajouter des effets de transition.
+- **scripts/main.js**: Un fichier JavaScript qui contient les fonctionnalités interactives de l'application.
+- **images/default.png**: L'image par défaut affichée sur la page web.
 
 ## Setup Instructions
-1. Clone the repository or download the project files.
-2. Open the `index.html` file in a web browser to view the web page.
-3. Ensure that the image file `default.jpg` is located in the `images` folder.
-4. Check the console in the browser's developer tools to see the "Hello World" message from the JavaScript file.
+1. Clonez le dépôt ou téléchargez les fichiers du projet.
+2. Ouvrez le fichier `index.html` dans un navigateur web pour voir la page web.
+3. Assurez-vous que le fichier d'image `default.png` est situé dans le dossier `images`.
+4. Vérifiez la console dans les outils de développement du navigateur pour voir les messages du fichier JavaScript.
+
+## Usage
+- **Ajouter aux favoris**: Cliquez sur le bouton "❤️ Ajouter aux favoris" pour ajouter le film aux favoris.
+- **Suivant**: Cliquez sur le bouton "➡️ Suivant" pour passer au film suivant.
 
 ## License
-This project is open source and available for use and modification.
+Ce projet est open source et disponible pour utilisation et modification.

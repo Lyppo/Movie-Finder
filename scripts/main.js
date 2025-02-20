@@ -1,7 +1,7 @@
 // main.js
 import { load, loged, createRequestToken, createAccessToken, createSession, request } from './api.js';
 import { ouvrirPopupLogin } from './popup.js';
-import { creerElementsDepuisHTML, removeElement } from './html.js';
+import { creerElement, creerElementsDepuisHTML, removeElement } from './html.js';
 
 async function login(event) {
 
@@ -34,6 +34,8 @@ async function login(event) {
     
     removeElement("#btnLogin");
 
+    creerElement({tag: "button", id : "btnLogout", textContent : "Se déconnecter", parent : "#zenith"}).addEventListener("click", logout);
+
     while (await loged()); // test combien de temps avant de se faire déconnecter
 
     console.log("Déconnecté !");
@@ -42,10 +44,29 @@ async function login(event) {
 
 load(); // Récupère les cookies et charge les valeurs
 
+async function logout(event) {
+    console.log("Déconnexion...");
+    document.cookie.split(";").forEach((cookie) => {
+        let name = cookie.split("=")[0].trim();
+        document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    });
+}
+
 
 if (await loged()) {
     console.log("Connecté ! via les cookies");
+    creerElement({tag: "button", id : "btnLogout", textContent : "Se déconnecter", parent : "#zenith"}).addEventListener("click", logout);
 }
 else {
-    creerElementsDepuisHTML("body", 0, `<button id="btnLogin">Se connecter</button>`).btnLogin.addEventListener("click", login); // Ajoute un écouteur d'événement au bouton
+    creerElement({tag: "button", id : "btnLogin", textContent : "Se connecter", parent : "#zenith"}).addEventListener("click", login);
 }
+
+creerElement({tag: "img", id : "poster", parent : "#zenith", attributs : {src: "Images/Default.png", alt: "Default Image"}});
+
+creerElement({tag: "div", id : "container-img", parent : "#app"});
+
+creerElement({tag: "h2", textContent : "Default Movie", parent : "#app"});
+
+let div = creerElement({tag: "div", id : "buttons", parent : "#app"});
+div.appendChild(creerElement({tag: "button", id : "like", textContent : "❤️ Ajouter aux favoris", parent : "#buttons"}));
+div.appendChild(creerElement({tag: "button", id : "next", textContent : "➡️ Suivant", parent : "#buttons"}));

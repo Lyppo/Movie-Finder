@@ -50,7 +50,7 @@ export function removeElement(cible = "body", index = 0) {
     }
 }
 
-export function creerElementsDepuisHTML(parent = "body", numero = 0, htmlString = "") {
+export function creerElementsDepuisHTML(htmlString = "", parent = "body", numero = 0) {
     // Création d'un conteneur temporaire pour parser le HTML
     let tempContainer = document.createElement("div");
     tempContainer.innerHTML = htmlString.trim();

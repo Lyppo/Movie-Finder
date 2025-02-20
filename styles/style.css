@@ -15,31 +15,18 @@ html {
 body {
     min-height: 100vh;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-img {
-    z-index: 2;
-    position: absolute;
-    height: 450px;
-    width: auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, calc(-50% - 60px));
+img, button {
     box-shadow: black 0 0 30px;
     border: black 1px solid;
 }
 
-img:hover {
-    box-shadow: black 0 0 10px;
-    height: 500px;
-    border-color: gray;
-}
-
-img:hover ~ * {
-    filter: blur(5px);
+img, video {
+    z-index: 10;
+    max-width: 100%;
+    height: auto;
+    /*display: block;*/
 }
 
 button {
@@ -49,13 +36,47 @@ button {
     border: none;
     padding: 10px 20px;
     margin: 5px;
-    box-shadow: black 0 0 30px;
 }
 
 button:hover {
     background-color: #555; /* Couleur au survol */
     text-shadow: whitesmoke 0 0 30px;
     box-shadow: black 0 0 10px;
+}
+
+#zenith {
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#zenith * {
+    position: absolute;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#poster {
+    height: 450px;
+    width: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% - 60px));
+}
+
+#poster:hover {
+    box-shadow: black 0 0 10px;
+    height: 500px;
+    border-color: gray;
+}
+
+#poster:hover ~ * {
+    filter: blur(5px);
 }
 
 #container-img {
@@ -70,6 +91,14 @@ button:hover {
 }
 
 #btnLogin {
+    z-index: 1;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#btnLogout {
+    background-color: red;
     z-index: 1;
     position: absolute;
     top: 10px;
