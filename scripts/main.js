@@ -1,23 +1,42 @@
 // main.js
-import { createRequestToken, createAccessToken, request } from './api.js';
+import { load, loged, createRequestToken, createAccessToken, createSession, request } from './api.js';
 import { ouvrirPopupLogin } from './popup.js';
 
 async function login(event) {
+
     event.preventDefault(); // Empêche le comportement par défaut du bouton
 
     const tmpToken = await createRequestToken(); // Crée un token de demande
 
-    const authenticated = await ouvrirPopupLogin(tmpToken); // Attendre que l'utilisateur s'authentifie
+    let authenticated = false;
 
-    if (authenticated) {
-        const data = await createAccessToken(tmpToken); // Crée un token d'accès si authentifié
-        console.log("✅ Access Token :", data.access_token);
-        console.log("✅ Account ID :", data.account_id);
-        console.log(await request(data.account_id, data.access_token)); // Requête de test
-
-    } else { 
-        console.error("Erreur lors de l'authentification !");
+    while (!authenticated) {
+        authenticated = await ouvrirPopupLogin(tmpToken); // Attendre que l'utilisateur s'authentifie
     }
+
+    await createAccessToken(tmpToken); // Crée un token d'accès si authentifié
+
+    await createSession(); // Crée une session pour l'utilisateur authentifié
+
+    console.log("Connecté !");// Vérifier les cookies dans la console
+    console.log(document.cookie);
+
+    document.getElementById("btnLogin").textContent = "Connecté";
+    document.getElementById("btnLogin").removeEventListener("click", login);
+
+    while (await loged()); // test combien de temps avant de se faire déconnecter
+
+    console.log("Déconnecté !");
+
 }
 
-document.getElementById("btnLogin").addEventListener("click", login); // Ajoute un écouteur d'événement au bouton
+load(); // Récupère les cookies et charge les valeurs
+
+
+if (await loged()) {
+    console.log("Connecté !\nvia les cookies");
+    document.getElementById("btnLogin").textContent = "Connecté";
+}
+else {
+    document.getElementById("btnLogin").addEventListener("click", login); // Ajoute un écouteur d'événement au bouton
+}

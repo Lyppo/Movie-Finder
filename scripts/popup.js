@@ -1,10 +1,9 @@
 // popup.js
-export function ouvrirPopupLogin(resuqetToken) {
+export function ouvrirPopupLogin(requestToken) {
     return new Promise((resolve) => {
-        if (!resuqetToken) {
+        if (!requestToken) {
             console.error("Erreur : request_token manquant !");
             resolve(false);
-            return;
         }
 
         const width = 640;
@@ -13,7 +12,7 @@ export function ouvrirPopupLogin(resuqetToken) {
         const top = (screen.height - height) / 2;
 
         const popup = window.open(
-            `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(resuqetToken)}`,
+            `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(requestToken)}`,
             "popupLogin",
             `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,menubar=no,toolbar=no,location=no,status=no`
         );
@@ -21,18 +20,15 @@ export function ouvrirPopupLogin(resuqetToken) {
         if (!popup) {
             console.error("Impossible d'ouvrir la popup (bloquée par le navigateur ?)");
             resolve(false);
-            return;
         }
 
         function messageListener(event) {
             if (event.origin !== window.location.origin) {
                 console.error("Origine non autorisée !");
                 resolve(false);
-                return;
             }
 
             if (event.data === "authenticated") {
-                console.log("Utilisateur authentifié.");
                 window.removeEventListener("message", messageListener);
                 resolve(true);
             }
