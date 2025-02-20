@@ -103,7 +103,9 @@ export async function createRequestToken() {
 
     let redirect_to = window.location.href; // Récupère l'URL actuelle
 
-    if (redirect_to.endsWith("index.html")) redirect_to = redirect_to.replace("index.html", ""); // Supprime "index.html" de l'URL
+    if (redirect_to.endsWith(".html")) redirect_to = redirect_to.replace(".html", ""); // Supprime ".html" de l'URL
+
+    if (redirect_to.endsWith("/index")) redirect_to = redirect_to.replace("index", ""); // Supprime "index" de l'URL
     
     const data = await requestauth('https://api.themoviedb.org/4/auth/request_token',
         { redirect_to: redirect_to + "/popup.html" }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" style="background-color: #222;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +17,13 @@
             }
         } else {
             console.error("La fenêtre parente n'existe pas.");
+
+            let currentUrl = window.location.href;
+            if (currentUrl.endsWith(".html")) currentUrl = currentUrl.replace(".html", ""); // Supprime ".html" de l'URL
+            let newUrl = currentUrl.replace("/popup", ""); // Retire 'popup' de l'URL
+            
+            // Rediriger vers la nouvelle URL
+            window.location.href = newUrl; 
         }
         window.close();
     </script>
