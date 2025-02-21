@@ -1,5 +1,5 @@
 // main.js
-import { load, loged, createRequestToken, createAccessToken, createSession, request } from './api.js';
+import { load, loged, createRequestToken, createAccessToken, createSession, request, logoutRequest } from './api.js';
 import { ouvrirPopupLogin } from './popup.js';
 import { creerElement, creerElementsDepuisHTML, removeElement } from './html.js';
 
@@ -33,9 +33,9 @@ async function login(event) {
     console.log("Connecté !");
     
     removeElement("#btnLogin");
-
-    creerElement({tag: "button", id : "btnLogout", textContent : "Se déconnecter", parent : "#zenith"}).addEventListener("click", logout);
-
+    
+    creerElementsDepuisHTML(`<button id="btnLogout">Se déconnecter</button>`, "#zenith").addEventListener("click", logout);
+    
     while (await loged()); // test combien de temps avant de se faire déconnecter
 
     console.log("Déconnecté !");
@@ -45,28 +45,44 @@ async function login(event) {
 load(); // Récupère les cookies et charge les valeurs
 
 async function logout(event) {
+    /*if (!await request("https://api.themoviedb.org/3/authentication/session", "DELETE", {}, {session_id: ''}).success) {
+        console.error("Erreur lors de la déconnexion.");
+        return null;
+    }/*                                 // deconection pas encore totalement opérationelle
+    if (!await logoutRequest()) {
+        console.error("Erreur lors de la déconnexion.");
+        return null;
+    }*/
     console.log("Déconnexion...");
     document.cookie.split(";").forEach((cookie) => {
         let name = cookie.split("=")[0].trim();
         document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     });
+    removeElement("#btnLogout");
+    creerElementsDepuisHTML(`<button id="btnLogin">Se connecter</button>`, "#zenith").addEventListener("click", login);
 }
-
 
 if (await loged()) {
     console.log("Connecté ! via les cookies");
-    creerElement({tag: "button", id : "btnLogout", textContent : "Se déconnecter", parent : "#zenith"}).addEventListener("click", logout);
+    creerElementsDepuisHTML(`<button id="btnLogout">Se déconnecter</button>`, "#zenith").addEventListener("click", logout);
+} else {
+    creerElementsDepuisHTML(`<button id="btnLogin">Se connecter</button>`, "#zenith").addEventListener("click", login);
 }
-else {
-    creerElement({tag: "button", id : "btnLogin", textContent : "Se connecter", parent : "#zenith"}).addEventListener("click", login);
-}
 
-creerElement({tag: "img", id : "poster", parent : "#zenith", attributs : {src: "Images/Default.png", alt: "Default Image"}});
+// Ajout de l'image avec les attributs bien placés
+creerElementsDepuisHTML(`<img id="poster" src="Images/Default.png" alt="Default Image" />`, "#zenith");
 
-creerElement({tag: "div", id : "container-img", parent : "#app"});
+// Création du container d'image
+creerElementsDepuisHTML(`<div id="container-img"></div>`, "#app");
 
-creerElement({tag: "h2", textContent : "Default Movie", parent : "#app"});
+// Ajout du titre
+creerElementsDepuisHTML(`<h2>Default Movie</h2>`, "#app");
 
-let div = creerElement({tag: "div", id : "buttons", parent : "#app"});
-div.appendChild(creerElement({tag: "button", id : "like", textContent : "❤️ Ajouter aux favoris", parent : "#buttons"}));
-div.appendChild(creerElement({tag: "button", id : "next", textContent : "➡️ Suivant", parent : "#buttons"}));
+// Création de la div qui contiendra les boutons
+let div = creerElementsDepuisHTML(`<div id="buttons"></div>`, "#app");
+
+// Ajout des boutons dans la div
+div = document.getElementById("buttons"); // Récupère la div après l'avoir ajoutée au DOM
+
+div.appendChild(creerElementsDepuisHTML(`<button id="like">❤️ Ajouter aux favoris</button>`));
+div.appendChild(creerElementsDepuisHTML(`<button id="next">➡️ Suivant</button>`));

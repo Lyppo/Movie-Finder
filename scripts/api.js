@@ -37,10 +37,10 @@ export async function loged() {
     }
 }
 
-export async function requestauth(url, content) {
+export async function requestauth(url, content, type = 'POST') {
     try {
         const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
-            method: 'POST',
+            method: type,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 url: url,
@@ -60,8 +60,7 @@ export async function requestauth(url, content) {
     }
 }
 
-export async function request(url = "https://api.themoviedb.org/3/authentication", type = "GET", params = {}, content = null) {
-
+export async function request(url = "https://api.themoviedb.org/3/authentication", type = "GET", params = {}, content = {}) {
     if (!url.includes("api.themoviedb.org")) {
         console.error("L'URL doit concerner le site api.themoviedb.org.");
         return null; // Renvoie une erreur
@@ -73,30 +72,44 @@ export async function request(url = "https://api.themoviedb.org/3/authentication
 
     url += detail; // Ajoute les paramètres à l'URL
 
+    // Remplace les valeurs de content si elles sont présentes
+    if (content.session_id !== undefined) {
+        content.session_id = SESSION_ID;
+    }
+    if (content.account_id !== undefined) {
+        content.account_id = ACCOUNT_ID;
+    }
+    if (content.access_token !== undefined) {
+        content.access_token = ACCESS_TOKEN;
+    }
+
     try {
+        let response;
+
         // Envoie la requête à l'API TMDB
-        const response = await fetch(url, {
+        response = await fetch(url, {
             method: type, // Type de requête (GET, POST, PUT, DELETE, etc.)
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${ACCESS_TOKEN}`, // Authentification avec le token
-            }
+            },
+            body: type !== 'GET' ? JSON.stringify(content) : undefined // Corps de la requête (si POST ou PUT)
         });
-    
+
         const data = await response.json(); // Parse la réponse de TMDB
-    
+
         // Vérifie si l'API TMDB a renvoyé une erreur
         if (!response.ok) {
             console.error("Erreur de l'API TMDB :", response.status, data);
             return null; // Renvoie une erreur
         }
-    
+
         return data; // Renvoie la réponse réussie
-    
-      } catch (error) {
-            console.error("Erreur lors de la requête TMDB :", error);
-            return null; // Renvoie une erreur
-      }
+
+    } catch (error) {
+        console.error("Erreur lors de la requête TMDB :", error);
+        return null; // Renvoie une erreur
+    }
 }
 
 export async function createRequestToken() {
@@ -138,6 +151,15 @@ export async function createSession() {
     SESSION_ID = data.session_id;
 
     document.cookie = "SESSION_ID=" + SESSION_ID + "; max-age=" + (30 * 24 * 60 * 60) + "; path=/";
+
+    return data;
+}
+
+export async function logoutRequest() {
+    const data = await requestauth('https://api.themoviedb.org/4/auth/access_token',
+        { access_token: ACCESS_TOKEN },
+        'DELETE'
+    );
 
     return data;
 }
