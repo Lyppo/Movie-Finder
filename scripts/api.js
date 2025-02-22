@@ -34,9 +34,9 @@ export async function loged() {
     if (!ACCESS_TOKEN) {
         return false;
     } else {
-        console.log(`\n🟢 [LOGGED] Vérification de l'authentification...`);
+        console.log(`\n${setColor('green', '[LOGGED]')} Vérification de l'authentification...`);
         const data = await request("https://api.themoviedb.org/3/authentication");
-        console.log("✅ [LOGGED] Résultat :", data);
+        console.log(setColor('green', '[LOGGED]') + " Résultat :", data);
         return data.success;
     }
 }
@@ -44,7 +44,7 @@ export async function loged() {
 // 🔹 Requêtes à l'API
 export async function request(url = "https://api.themoviedb.org/3/authentication", type = "GET", params = {}, content = {}) {
     if (!url.includes("api.themoviedb.org")) {
-        console.error("⛔ [Erreur] L'URL doit concerner api.themoviedb.org.");
+        console.error(setColor('red', '[Erreur]') + " L'URL doit concerner api.themoviedb.org.");
         return null;
     }
 
@@ -57,7 +57,7 @@ export async function request(url = "https://api.themoviedb.org/3/authentication
     if (content.access_token !== undefined) content.access_token = ACCESS_TOKEN;
 
     try {
-        console.log(`\n🔵 [REQUEST] ${type} → ${url}`);
+        console.log(`\n${setColor('blue', '[REQUEST]')} ${type} → ${url}`);
         console.log("📩 Contenu envoyé :", content);
 
         let response = await fetch(url, {
@@ -73,20 +73,20 @@ export async function request(url = "https://api.themoviedb.org/3/authentication
         console.log("📬 Réponse reçue :", data);
 
         if (!response.ok) {
-            console.error("🚨 [REQUEST] Erreur API :", response.status, data);
+            console.error(setColor('red', '[REQUEST]') + " Erreur API :", response.status, data);
             return null;
         }
 
         return data;
     } catch (error) {
-        console.error("🚨 [REQUEST] Erreur :", error);
+        console.error(setColor('red', '[REQUEST]') + " Erreur :", error);
         return null;
     }
 }
 
 export async function requestauth(url, content, type = 'POST') {
     try {
-        console.log(`\n🔵 [REQUEST AUTH] ${type} → ${url}`);
+        console.log(`\n${setColor('blue', '[REQUEST AUTH]')} ${type} → ${url}`);
         console.log("📩 Contenu envoyé :", content);
 
         const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
@@ -99,12 +99,12 @@ export async function requestauth(url, content, type = 'POST') {
         console.log("📬 Réponse reçue :", data);
 
         if (!response.ok) {
-            throw new Error(`❌ [Erreur] Code HTTP : ${response.status}`);
+            throw new Error(`❌ ${setColor('red', '[Erreur]')} Code HTTP : ${response.status}`);
         }
 
         return data;
     } catch (error) {
-        console.error("🚨 [REQUEST AUTH] Erreur :", error.message);
+        console.error(setColor('red', '[REQUEST AUTH]') + " Erreur :", error.message);
         return null;
     }
 }
@@ -165,4 +165,16 @@ export async function logoutRequest() {
 
     console.log("✅ [LOGOUT] Résultat :", data);
     return data;
+}
+
+// Fonction utilitaire pour appliquer des couleurs
+function setColor(color, text) {
+    const colors = {
+        red: "\x1b[31m",     // Rouge
+        green: "\x1b[32m",   // Vert
+        blue: "\x1b[34m",    // Bleu
+        reset: "\x1b[0m"     // Réinitialiser
+    };
+
+    return (colors[color] || colors.reset) + text + colors.reset;
 }
