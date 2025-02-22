@@ -1,13 +1,13 @@
+/* Styles globaux */
 * {
-    /* outline: 2px solid red; */
     transition: ease-in-out 0.3s;
-    transition-delay: 0s;
     text-shadow: black 0 0 30px;
     border-radius: 8px;
     text-align: center;
     color: whitesmoke;
 }
 
+/* Fond de page */
 html {
     background-color: #222;
 }
@@ -17,6 +17,7 @@ body {
     margin: 0;
 }
 
+/* Styles pour les images et les boutons */
 img, button {
     box-shadow: black 0 0 30px;
     border: black 1px solid;
@@ -26,9 +27,9 @@ img, video {
     z-index: 10;
     max-width: 100%;
     height: auto;
-    /*display: block;*/
 }
 
+/* Styles des boutons */
 button {
     background-color: rgb(1, 180, 228);
     cursor: pointer;
@@ -38,12 +39,14 @@ button {
     margin: 5px;
 }
 
+/* Effet au survol des boutons */
 button:hover {
     background-color: #555; /* Couleur au survol */
     text-shadow: whitesmoke 0 0 30px;
     box-shadow: black 0 0 10px;
 }
 
+/* Styles spécifiques pour le conteneur zenith */
 #zenith {
     z-index: 1;
     display: flex;
@@ -55,12 +58,14 @@ button:hover {
     position: absolute;
 }
 
+/* Centre flex */
 .flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* Styles pour l'affiche */
 #poster {
     height: 450px;
     width: auto;
@@ -75,14 +80,17 @@ button:hover {
     border-color: gray;
 }
 
+/* Flou sur les éléments voisins lors du survol de l'affiche */
 #poster:hover ~ * {
     filter: blur(5px);
 }
 
+/* Conteneur de l'image */
 #container-img {
     height: 450px;
 }
 
+/* Styles pour les boutons dans le conteneur */
 #buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -90,7 +98,9 @@ button:hover {
     justify-content: center;
 }
 
-#btnLogin {
+/* Styles spécifiques pour le bouton de connexion et de déconnexion */
+#btnLogin,
+#btnLogout {
     z-index: 1;
     position: absolute;
     top: 10px;
@@ -98,9 +108,5 @@ button:hover {
 }
 
 #btnLogout {
-    background-color: red;
-    z-index: 1;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    background-color: red; /* Couleur spécifique pour le bouton de déconnexion */
 }

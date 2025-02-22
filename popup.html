@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>popup</title>
+    <title>Popup d'Authentification</title>
     <link rel="icon" href="web-icone.ico" type="image/x-icon">
+    <style> * {text-align: center;}</style>
 </head>
 <body>
+    <h1>Authentification en cours...</h1>
+    <p>Veuillez patienter pendant que nous vous redirigeons.</p>
+    
     <script>
         // Vérifie si la fenêtre parent existe avant d'envoyer le message
         if (window.opener) {
             try {
                 window.opener.postMessage("authenticated", window.location.origin);
+                // Ferme la fenêtre après l'envoi du message
+                window.close();
             } catch (error) {
                 console.error("Erreur lors de l'envoi du message à la fenêtre parente :", error);
             }
@@ -25,7 +31,6 @@
             // Rediriger vers la nouvelle URL
             window.location.href = newUrl; 
         }
-        window.close();
     </script>
 </body>
 </html>

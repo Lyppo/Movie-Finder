@@ -1,39 +1,44 @@
 // html.js
-export function creerElement({tag = "div", parent = "body", numero = 0, attributs = {}} = {}) {
-    // Création de l'élément
-    let element = document.createElement(tag);
 
-    if (!("id" in attributs)) {  
+// Fonction pour créer un élément HTML
+export function creerElement({ tag = "div", parent = "body", numero = 0, attributs = {} } = {}) {
+    // Création de l'élément
+    const element = document.createElement(tag);
+
+    // Attribution d'un ID par défaut si non fourni
+    if (!("id" in attributs)) {
         attributs.id = "unamed-" + Math.floor(10000 + Math.random() * 90000);
     }
 
-    if ("textContent" in attributs) {  
+    // Ajout du contenu texte si fourni
+    if ("textContent" in attributs) {
         element.textContent = attributs.textContent;
-        delete attributs.textContent;
+        delete attributs.textContent; // Suppression de l'attribut après usage
     }
 
     // Ajout des autres attributs
-    for (let [key, value] of Object.entries(attributs)) {
+    Object.entries(attributs).forEach(([key, value]) => {
         element.setAttribute(key, value);
-    }
+    });
 
-    // Sélection du parent
-    let parents = document.querySelectorAll(parent);
+    // Sélection du parent et ajout de l'élément
+    const parents = document.querySelectorAll(parent);
     if (parents.length === 0) {
-        console.warn(`Parent '${parent}' non trouvé.\nAssigné à <body> par défaut`);
+        console.warn(`Parent '${parent}' non trouvé. Assigné à <body> par défaut.`);
         document.body.appendChild(element);
     } else if (parents.length > numero) {
         parents[numero].appendChild(element);
     } else {
-        console.warn(`Parent '${parent}' numéro ${numero} non trouvé.\nAssigné à l'élément 0 par défaut`);
+        console.warn(`Parent '${parent}' numéro ${numero} non trouvé. Assigné à l'élément 0 par défaut.`);
         parents[0].appendChild(element);
     }
 
-    return element;
+    return element; // Retourne l'élément créé
 }
 
+// Fonction pour supprimer un élément HTML
 export function removeElement(cible = "body", index = 0) {
-    let elements = document.querySelectorAll(cible);
+    const elements = document.querySelectorAll(cible);
 
     // Vérifie si des éléments ont été trouvés
     if (elements.length === 0) {
@@ -55,12 +60,13 @@ export function removeElement(cible = "body", index = 0) {
     }
 }
 
+// Fonction pour créer des éléments à partir d'une chaîne HTML
 export function creerElementsDepuisHTML(htmlString = "", parent = "body", numero = 0) {
     // Nettoyage de la chaîne HTML
     htmlString = htmlString.trim();
 
-    // Vérifie si la chaîne commence par une balise (y compris les auto-fermantes)
-    const regex = /^<(\w+)([^>]*)\/?>$|^<(\w+)([^>]*)>(.*?)<\/\3>$/s; // Expression régulière pour matcher une balise
+    // Vérifie si la chaîne commence par une balise
+    const regex = /^<(\w+)([^>]*)\/?>$|^<(\w+)([^>]*)>(.*?)<\/\3>$/s;
     const match = htmlString.match(regex);
 
     if (!match) {
@@ -68,7 +74,7 @@ export function creerElementsDepuisHTML(htmlString = "", parent = "body", numero
         return null; // Retourne null en cas d'erreur
     }
 
-    // Déterminer si c'est une balise auto-fermante ou non
+    // Déterminer le tag, les attributs et le contenu texte
     let tag, attributesString, textContent;
     if (match[1]) {
         // Cas d'une balise auto-fermante
@@ -84,13 +90,11 @@ export function creerElementsDepuisHTML(htmlString = "", parent = "body", numero
 
     // Parse des attributs
     const attributs = {};
-    const attrRegex = /(\w+)\s*=\s*"([^"]*?)"/g; // Expression régulière pour matcher les attributs
+    const attrRegex = /(\w+)\s*=\s*"([^"]*?)"/g;
     let attrMatch;
 
     while ((attrMatch = attrRegex.exec(attributesString)) !== null) {
-        const key = attrMatch[1];
-        const value = attrMatch[2];
-        attributs[key] = value;
+        attributs[attrMatch[1]] = attrMatch[2]; // Ajoute l'attribut au dictionnaire
     }
 
     // Ajoute le texte de contenu à l'objet d'attributs si ce n'est pas une balise auto-fermante
