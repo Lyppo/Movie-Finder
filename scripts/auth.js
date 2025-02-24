@@ -9,7 +9,7 @@ async function requestAuth(url, content, type) {
 
     try {
 
-        const response = await fetch('https://tmdb-request-debug.antodu72210.workers.dev/', {
+        const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
             method: type,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: url, content: content })
