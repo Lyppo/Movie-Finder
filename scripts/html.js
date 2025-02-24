@@ -1,7 +1,5 @@
-// html.js
-
 // Fonction pour créer un élément HTML
-export function creerElement({ tag = "div", parent = "body", numero = 0, attributs = {} } = {}) {
+function creerElement({ tag = "div", parent = "body", numero = 0, attributs = {} } = {}) {
     // Création de l'élément
     const element = document.createElement(tag);
     console.log(`\t🛠️ Création de l'élément <${tag}>.`);
@@ -42,7 +40,7 @@ export function creerElement({ tag = "div", parent = "body", numero = 0, attribu
 }
 
 // Fonction pour supprimer un élément HTML
-export function removeElement(cible = "body", index = 0) {
+function removeElement(cible = "body", index = 0) {
     const elements = document.querySelectorAll(cible);
     console.log(`🧹 Tentative de suppression d'un élément correspondant à '${cible}' à l'index ${index}.`);
 
@@ -70,7 +68,7 @@ export function removeElement(cible = "body", index = 0) {
 }
 
 // Fonction pour créer des éléments à partir d'une chaîne HTML
-export function creerElementsDepuisHTML(htmlString = "", parent = "body", numero = 0) {
+function creerElementsDepuisHTML(htmlString = "", parent = "body", numero = 0) {
     // Nettoyage de la chaîne HTML
     htmlString = htmlString.trim();
     console.log(`📜 Traitement de la chaîne HTML : ${htmlString}`);

@@ -1,6 +1,6 @@
 // popup.js
 
-export function ouvrirPopupLogin(requestToken) {
+function ouvrirPopupLogin(requestToken) {
     return new Promise((resolve) => {
         // Vérification de la présence du requestToken
         if (!requestToken) {
