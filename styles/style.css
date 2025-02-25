@@ -100,6 +100,7 @@ button:hover {
 
 /* Styles spécifiques pour le bouton de connexion et de déconnexion */
 #userInterface {
+    z-index: 20;
     top: 25px;
     right: 25px;
     display: grid;
@@ -108,6 +109,8 @@ button:hover {
     justify-items: center;
     width: 200px;
     border: 1px solid gray;
+    background-color: #222;
+    box-shadow: black 0 0 10px;
 }
 
 #userInterface * {
