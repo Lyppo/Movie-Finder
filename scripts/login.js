@@ -22,6 +22,10 @@ async function loged() {
 async function login(event) {
     event?.preventDefault(); // Empêche le rechargement de la page
 
+    if (event?.target) {
+        event.target.removeEventListener("click", login);
+    }
+
     console.groupCollapsed("🔵 Tentative de connexion..."); // Message de débogage
 
     const tmpToken = await createRequestToken();
@@ -39,11 +43,16 @@ async function login(event) {
     if (!authenticated) {
         console.error("🚨 Échec de l'authentification après 3 tentatives."); // Message d'erreur
         console.groupEnd(); // Termine le groupe de logs
+        event.target.addEventListener("click", login);
         return;
     }
 
     await createAccessToken(tmpToken);
     await createSession();
+
+    event.target.remove();
+
+    setuploged();
 
     console.log("🔵 Connexion réussie !"); // Message de débogage
     console.groupEnd(); // Termine le groupe de logs

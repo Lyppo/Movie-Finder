@@ -1,37 +1,81 @@
-// 🟠 CONFIGURATION DE L'INTERFACE UTILISATEUR
+async function userInterface(zenith) {
+
+    console.groupCollapsed("creation du profil utilisateur");
+
+    let userInterface = document.createElement("div");
+    userInterface.id = "userInterface";
+    zenith.appendChild(userInterface);
+    if (await loged()) {
+        setuploged(userInterface);
+    }
+    else {
+        setuplogin(userInterface);
+    }
+
+    console.groupEnd();
+}
+
+function setuplogin(userInterface = document.getElementById("userInterface")) {
+
+    console.groupCollapsed("🟠 Configuration de la fonction de connection"); // Début du groupe de logs
+
+    let btn = document.createElement("button");
+    btn.id = "btnLogin";
+    btn.textContent = "Se connecter";
+    btn.addEventListener("click", login);
+    userInterface.appendChild(btn);
+
+    console.groupEnd();
+}
+
+function setuploged(userInterface = document.getElementById("userInterface")) {
+
+    console.groupCollapsed("🟠 Configuration de la fonction de controle utilisateur"); // Début du groupe de logs
+
+    let btn = document.createElement("button");
+    btn.id = "btnLogout";
+    btn.textContent = "Se déconnecter";
+    btn.addEventListener("click", logout);
+    userInterface.appendChild(btn);
+
+    console.groupEnd();
+}
+
 function setupUI() {
+
+    console.groupCollapsed("🟠 Configuration de la page"); // Début du groupe de logs
 
     document.querySelectorAll("noscript").forEach((element) => {
         console.log("🧹 Suppression de l'élément <noscript>...");
         element.remove();
     });
 
-    let zenith = document.createElement("div"); // Crée l'élément div
-    zenith.id = "zenith"; // Assigne l'ID
-    
-    let app = document.createElement("div"); // Crée l'autre élément div
-    app.id = "app"; // Assigne l'ID
-    
-    document.querySelector("body").appendChild(zenith); // Ajoute zenith au body
-    document.querySelector("body").appendChild(app); // Ajoute app au body
+    let body = document.querySelector("body");
 
-    let poster = document.createElement("img"); // Crée l'élément img
-    let containerImg = document.createElement("div"); // Crée l'élément div
-    let titele = document.createElement("h2"); // Crée l'élément h2
+    let zenith = document.createElement("div");
+    zenith.id = "zenith";
+    body.appendChild(zenith);
+    userInterface(zenith);
 
-    console.log("🟠 Configuration de l'interface utilisateur..."); // Message de débogage
+    let app = document.createElement("div");
+    app.id = "app";
+    body.appendChild(app);
 
-    poster.id = "poster"; // Assigne l'ID
-    poster.src = "Images/Default.png"; // Assigne le src
-    poster.alt = "Default Image"; // Assigne l'alt
-    containerImg.id = "container-img"; // Assigne l'ID
-    titele.textContent = "Default Movie"; // Assigne le texte
-    
-    zenith.appendChild(poster); // Ajoute poster à zenith
-    app.appendChild(containerImg); // Ajoute containerImg à app
-    app.appendChild(titele); // Ajoute titele à app
+    let poster = document.createElement("img");
+    poster.id = "poster";
+    poster.src = "Images/Default.png";
+    poster.alt = "Default Image";
 
-    // Création du conteneur de boutons
+    let containerImg = document.createElement("div");
+    containerImg.id = "container-img";
+
+    let titele = document.createElement("h2");
+    titele.textContent = "Default Movie";
+
+    app.appendChild(containerImg);
+    app.appendChild(titele);
+    zenith.appendChild(poster);
+
     let button = document.createElement("div");
     button.id = "buttons";
     app.appendChild(button);
@@ -39,36 +83,15 @@ function setupUI() {
     let b1 = document.createElement("button");
     b1.id = "like";
     b1.textContent = "❤️ Ajouter aux favoris";
+
     let b2 = document.createElement("button");
     b2.id = "next";
     b2.textContent = "➡️ Suivant";
 
-    button.appendChild(b1); // Ajoute les boutons à div
-    button.appendChild(b2); // Ajoute les boutons à div
-}
-
-// 🔄 MISE À JOUR UI : APRÈS CONNEXION
-function updateUIAfterLogin() {
-    console.log("🔄 Mise à jour de l'UI après connexion..."); // Message de débogage
-    creerElementsDepuisHTML(`<button id="btnLogout">Se déconnecter</button>`, "#zenith")
-        .addEventListener("click", logout);
-}
-
-// 🔄 MISE À JOUR UI : APRÈS DÉCONNEXION
-function updateUIAfterLogout() {
-    console.log("🔄 Mise à jour de l'UI après déconnexion..."); // Message de débogage
-    creerElementsDepuisHTML(`<button id="btnLogin">Se connecter</button>`, "#zenith")
-        .addEventListener("click", login);
-}
-
-// 🔍 VÉRIFICATION DE L'ÉTAT DE CONNEXION
-async function verifyLoginStatus() {
-    console.log("🔍 Vérification de l'état de connexion..."); // Message de débogage
-    if (await loged()) {
-        updateUIAfterLogin();
-    } else {
-        updateUIAfterLogout();
-    }
+    button.appendChild(b1);
+    button.appendChild(b2);
+    
+    console.groupEnd();
 }
 
 async function loadImage(element, imagePath) {
@@ -137,17 +160,26 @@ async function loadImage(element, imagePath) {
 }
 
 // Exemple d'utilisation
-async function getUser() {
-    console.log("🔍 Chargement des données utilisateur..."); // Message de débogage
+async function test() {
+    console.groupCollapsed("🔍 Chargement des données utilisateur..."); // Message de débogage
     let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
-    let poster = document.getElementById("poster");
+    let pdp = document.createElement("img");
+    pdp.id = "pdp";
+    pdp.style.width = "80px";  // Largeur fixe
+    pdp.style.height = "80px"; // Hauteur fixe
+    pdp.style.objectFit = "cover"; // Remplit sans déformation
+    pdp.style.objectPosition = "center"; // Centre l'image si besoin
+    pdp.style.borderRadius = "50%"; /* Si tu veux un effet rond */
+    document.getElementById("userInterface").appendChild(pdp);
     console.log("🔍 Chargement de l'image pour l'utilisateur...");
-    loadImage(poster, data.avatar.tmdb.avatar_path);
+    loadImage(pdp, data.avatar.tmdb.avatar_path);
+    console.groupEnd();
 }
 
 function setupTest() {
-    console.log("🔧 Configuration des tests..."); // Message de débogage
-    creerElementsDepuisHTML(`<button style="top: 0px; left: 0px;" id="testuser">User</button>`, "#zenith")
-        .addEventListener("click", getUser);
+    console.groupCollapsed("🔧 Configuration des tests..."); // Message de débogage
+    creerElementsDepuisHTML(`<button style="top: 0px; left: 0px;" id="test">Test</button>`, "#zenith")
+        .addEventListener("click", test);
     console.log('🔧 Bouton de test créé.'); // Message de débogage
+    console.groupEnd();
 }

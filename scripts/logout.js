@@ -35,6 +35,11 @@ async function logoutClear() {
 
 async function logout(event) {
     event?.preventDefault();
+
+    if (event?.target) {
+        event.target.removeEventListener("click", logout);
+    }
+
     console.groupCollapsed("🔴 Tentative de déconnexion..."); // Début du groupe de logs
 
     try {
@@ -44,7 +49,10 @@ async function logout(event) {
         console.log("🔴 Déconnexion réussie !"); // Message de débogage
     } catch (error) {
         console.error(`🚨 ${error.message}`); // Message d'erreur
+        event.target.addEventListener("click", login);
     } finally {
-        console.groupEnd(); // Fin du groupe de logs
+        event.target.remove();
+        setuplogin();
+        console.groupEnd(); // Fin du groupe de logs=
     }
 }

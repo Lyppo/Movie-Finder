@@ -99,12 +99,13 @@ button:hover {
 }
 
 /* Styles spécifiques pour le bouton de connexion et de déconnexion */
-#btnLogin,
-#btnLogout {
-    z-index: 1;
-    position: absolute;
+#userInterface {
     top: 10px;
     right: 10px;
+}
+
+#userInterface * {
+    position: initial;
 }
 
 #btnLogout {

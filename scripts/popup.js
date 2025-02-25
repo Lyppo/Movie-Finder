@@ -1,10 +1,12 @@
 // popup.js
 
 function ouvrirPopupLogin(requestToken) {
+    console.groupCollapsed("🪟 Ouverture de la popup de connexion...");
     return new Promise((resolve) => {
         // Vérification de la présence du requestToken
         if (!requestToken) {
             console.error("❌ Erreur : request_token manquant !");
+            console.groupEnd();
             return resolve(false); // Sortir de la fonction si le token est manquant
         }
 
@@ -25,6 +27,7 @@ function ouvrirPopupLogin(requestToken) {
         // Vérification si la popup a été ouverte avec succès
         if (!popup) {
             console.error("❌ Impossible d'ouvrir la popup (bloquée par le navigateur ?)");
+            console.groupEnd();
             return resolve(false); // Sortir de la fonction si la popup ne s'ouvre pas
         }
         console.log("✅ Popup ouverte avec succès !");
@@ -34,6 +37,7 @@ function ouvrirPopupLogin(requestToken) {
             // Vérification de l'origine du message
             if (event.origin !== window.location.origin) {
                 console.error("❌ Origine non autorisée !");
+                console.groupEnd();
                 return resolve(false); // Sortir de la fonction si l'origine n'est pas autorisée
             }
 
@@ -41,6 +45,7 @@ function ouvrirPopupLogin(requestToken) {
             if (event.data === "authenticated") {
                 console.log("✅ Utilisateur authentifié !");
                 window.removeEventListener("message", messageListener); // Retrait de l'écouteur
+                console.groupEnd();
                 return resolve(true); // Résoudre la promesse avec succès
             } else {
                 console.log(`📩 Message reçu de la popup : ${event.data}`);
@@ -50,5 +55,6 @@ function ouvrirPopupLogin(requestToken) {
         // Ajout de l'écouteur de message
         window.addEventListener("message", messageListener);
         console.log("👂 Écouteur de message ajouté pour la popup.");
+        console.groupEnd();
     });
 }

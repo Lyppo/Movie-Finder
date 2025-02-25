@@ -33,8 +33,12 @@ function getCookies() {
 
 // 🔹 Ajouter ou mettre à jour un cookie
 function setCookie(name, value) {
+    
+    console.groupCollapsed("📤 Ajout d'un cookie...");
+
     if (!name || !value) {
         console.warn("⚠️ Impossible d'ajouter un cookie : nom et valeur requis !");
+        console.groupEnd();
         return;
     }
 
@@ -46,13 +50,16 @@ function setCookie(name, value) {
                 "color: inherit;",                                          // Séparateur normal
                 "color: green; font-weight: bold;"                         // Valeur en vert
     );
+    console.groupEnd();
 }
 
 // 🔹 Supprimer un cookie spécifique
 function clearCookie(name) {
+    console.groupCollapsed("🗑️ Suppression d'un cookie...");
     if (!cookies[name]) {
         console.warn(`⚠️ Le cookie "%c${name}%c" n'existe pas.`, 
                      "color: red; font-weight: bold;", "color: inherit;");
+        console.groupEnd();
         return;
     }
 
@@ -63,7 +70,5 @@ function clearCookie(name) {
                 "color: red; font-weight: bold;",  // Titre en rouge
                 "color: #ff4500; font-weight: bold;" // Nom du cookie en orange foncé
     );
+    console.groupEnd();
 }
-
-// 🔹 Chargement des cookies au démarrage
-getCookies();
