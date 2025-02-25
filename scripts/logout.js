@@ -51,7 +51,13 @@ async function logout(event) {
         console.error(`🚨 ${error.message}`); // Message d'erreur
         event.target.addEventListener("click", login);
     } finally {
-        event.target.remove();
+        
+        let userInterface = document.querySelectorAll("#userInterface > *");
+
+        for (let i = 0; i < userInterface.length; i++) {
+            userInterface[i].remove();
+        }
+
         setuplogin();
         console.groupEnd(); // Fin du groupe de logs=
     }

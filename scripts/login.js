@@ -50,7 +50,11 @@ async function login(event) {
     await createAccessToken(tmpToken);
     await createSession();
 
-    event.target.remove();
+    let userInterface = document.querySelectorAll("#userInterface > *");
+
+    for (let i = 0; i < userInterface.length; i++) {
+        userInterface[i].remove();
+    }
 
     setuploged();
 

@@ -28,7 +28,20 @@ function setuplogin(userInterface = document.getElementById("userInterface")) {
     console.groupEnd();
 }
 
-function setuploged(userInterface = document.getElementById("userInterface")) {
+async function setuploged(userInterface = document.getElementById("userInterface")) {
+
+    await createPDP(userInterface);
+
+    let div = document.createElement("div");
+    div.id = "list";
+    div.style.display = "none";
+    div.style.gridTemplateColumns = "1fr";
+    div.style.gap = "10px";
+    div.style.justifyItems = "center";
+    div.style.border = "1px solid gray";
+
+
+    userInterface.appendChild(div);
 
     console.groupCollapsed("🟠 Configuration de la fonction de controle utilisateur"); // Début du groupe de logs
 
@@ -36,7 +49,7 @@ function setuploged(userInterface = document.getElementById("userInterface")) {
     btn.id = "btnLogout";
     btn.textContent = "Se déconnecter";
     btn.addEventListener("click", logout);
-    userInterface.appendChild(btn);
+    div.appendChild(btn);
 
     console.groupEnd();
 }
@@ -160,20 +173,39 @@ async function loadImage(element, imagePath) {
 }
 
 // Exemple d'utilisation
-async function test() {
+async function createPDP(userInterface) {
     console.groupCollapsed("🔍 Chargement des données utilisateur..."); // Message de débogage
     let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
     let pdp = document.createElement("img");
     pdp.id = "pdp";
-    pdp.style.width = "80px";  // Largeur fixe
-    pdp.style.height = "80px"; // Hauteur fixe
+    pdp.style.width = "65px";  // Largeur fixe
+    pdp.style.height = "65px"; // Hauteur fixe
     pdp.style.objectFit = "cover"; // Remplit sans déformation
     pdp.style.objectPosition = "center"; // Centre l'image si besoin
     pdp.style.borderRadius = "50%"; /* Si tu veux un effet rond */
-    document.getElementById("userInterface").appendChild(pdp);
     console.log("🔍 Chargement de l'image pour l'utilisateur...");
+    userInterface.appendChild(pdp);
     loadImage(pdp, data.avatar.tmdb.avatar_path);
+    pdp.addEventListener("mouseenter", showOverlay); // Quand on entre dans pdp
     console.groupEnd();
+}
+
+function showOverlay(event) {
+    pdp.removeEventListener("mouseenter", showOverlay);
+    event.target.parentElement.addEventListener("mouseleave", DiscareOverlay); // Quand on quitte le parent
+    let btnLogout = document.getElementById("list");
+    btnLogout.style.display = "grid";
+}
+
+function DiscareOverlay(event) {
+    event.target.removeEventListener("mouseleave", DiscareOverlay);
+    pdp.addEventListener("mouseenter", showOverlay);
+    let btnLogout = document.getElementById("list");
+    btnLogout.style.display = "none";
+}
+
+async function test() {
+    console.log("test");
 }
 
 function setupTest() {

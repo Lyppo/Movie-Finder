@@ -100,8 +100,14 @@ button:hover {
 
 /* Styles spécifiques pour le bouton de connexion et de déconnexion */
 #userInterface {
-    top: 10px;
-    right: 10px;
+    top: 25px;
+    right: 25px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+    justify-items: center;
+    width: 200px;
+    border: 1px solid gray;
 }
 
 #userInterface * {
