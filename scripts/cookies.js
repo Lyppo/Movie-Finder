@@ -73,50 +73,45 @@ function clearCookie(name) {
     console.groupEnd();
 }
 
-// 📜 Documentation en console
-console.log(`%c📚 DOCUMENTATION DES COOKIES :
+console.groupCollapsed("%c📜 DOCUMENTATION COMPLÈTE cookies.js", "color: #FFD700; font-weight: bold; font-size: 18px;");
 
-%c📥 getCookies() → %cCharge tous les cookies et les affiche sous forme de tableau.
-    %c🔹 Si aucun cookie n'est trouvé → %c⚠️ Avertissement affiché.
-    %c🔹 Si des cookies existent → %c✅ Affichage dans un tableau + total des cookies chargés.
+console.groupCollapsed("%c📌 SIGNIFICATION DES ÉMOJIS", "color: #FFD700; font-weight: bold; font-size: 16px;");
+console.log(`%c🍪 Stockage des cookies → %cVariable contenant les cookies en mémoire.`,
+    "color: #32CD32; font-weight: bold;", "color: white;");
+console.log(`%c📥 Chargement des cookies → %cLecture et affichage des cookies stockés.`,
+    "color: #1E90FF; font-weight: bold;", "color: white;");
+console.log(`%c📤 Ajout d'un cookie → %cInsertion ou mise à jour d'un cookie.`,
+    "color: #FFD700; font-weight: bold;", "color: white;");
+console.log(`%c🗑️ Suppression d'un cookie → %cEffacement d'un cookie spécifique.`,
+    "color: #FF4500; font-weight: bold;", "color: white;");
+console.log(`%c⚠️ Avertissement → %cIndique une erreur ou un problème potentiel.`,
+    "color: orange; font-weight: bold;", "color: white;");
+console.log(`%c📊 Affichage tableau → %cAffiche les données sous forme de tableau.`,
+    "color: lightblue; font-weight: bold;", "color: white;");
+console.groupEnd();
 
-%c📤 setCookie(nom, valeur) → %cAjoute ou met à jour un cookie avec une durée de vie de 30 jours.
-    %c🔹 Nom et valeur sont requis → %c⚠️ Avertissement si l'un des deux est manquant.
-    %c🔹 Succès → %c🍪 Cookie ajouté avec affichage dans un tableau.
+console.groupCollapsed("%c🔹 FONCTIONS DISPONIBLES", "color: #FFD700; font-weight: bold; font-size: 16px;");
 
-%c🗑️ clearCookie(nom) → %cSupprime un cookie spécifique.
-    %c🔹 Si le cookie n'existe pas → %c⚠️ Avertissement affiché.
-    %c🔹 Si le cookie est supprimé → %c🗑️ Confirmation + tableau mis à jour.
+console.groupCollapsed("%c📥 getCookies()", "color: #1E90FF; font-weight: bold;");
+console.log(`%c   → Récupère tous les cookies stockés dans le navigateur.`, "color: white;");
+console.log(`%c   → Stocke les cookies dans un objet JavaScript.`, "color: white;");
+console.log(`%c   → Affiche les cookies sous forme de tableau dans la console.`, "color: white;");
+console.groupEnd();
 
-%c🔹 Logs et couleurs :
-    📊 %cconsole.table()%c → Affichage clair sous forme de tableau.
-    📥 %cChargement des cookies → %c🔵 Texte bleu.
-    ⚠️ %cErreurs et avertissements → %c🟠 Texte orange.
-    🍪 %cAjout de cookie → %c🟢 Texte vert.
-    🗑️ %cSuppression de cookie → %c🔴 Texte rouge.
+console.groupCollapsed("%c📤 setCookie(name, value)", "color: #FFD700; font-weight: bold;");
+console.log(`%c   → Ajoute un cookie ou met à jour sa valeur.`, "color: white;");
+console.log(`%c   → Le cookie est stocké pour une durée de 30 jours.`, "color: white;");
+console.log(`%c   → Affiche le cookie ajouté sous forme de tableau.`, "color: white;");
+console.groupEnd();
 
-%c📌 Fin de la documentation.`,
-    
-"color: #FFD700; font-weight: bold; font-size: 16px;", // 📚 Titre principal en doré
+console.groupCollapsed("%c🗑️ clearCookie(name)", "color: #FF4500; font-weight: bold;");
+console.log(`%c   → Supprime un cookie spécifique en le mettant à expiration.`, "color: white;");
+console.log(`%c   → Met à jour la liste des cookies après suppression.`, "color: white;");
+console.log(`%c   → Affiche un message si le cookie n'existe pas.`, "color: white;");
+console.groupEnd();
 
-"color: #1E90FF; font-weight: bold;", "color: white;", // 📥 getCookies
-"color: white;", "color: orange; font-weight: bold;",
-"color: white;", "color: green; font-weight: bold;",
+console.groupEnd(); // Ferme le groupe des fonctions
 
-"color: #FFA500; font-weight: bold;", "color: white;", // 📤 setCookie
-"color: white;", "color: orange; font-weight: bold;",
-"color: white;", "color: green; font-weight: bold;",
+console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
 
-"color: #FF4500; font-weight: bold;", "color: white;", // 🗑️ clearCookie
-"color: white;", "color: orange; font-weight: bold;",
-"color: white;", "color: red; font-weight: bold;",
-
-"color: grey; font-weight: bold;", // 🔹 Logs et couleurs
-"color: lightblue; font-weight: bold;", "color: white;",
-"color: blue; font-weight: bold;", "color: white;",
-"color: orange; font-weight: bold;", "color: white;",
-"color: green; font-weight: bold;", "color: white;",
-"color: red; font-weight: bold;", "color: white;",
-
-"color: #32CD32; font-weight: bold;" // 📌 Fin de doc
-);    
+console.groupEnd(); // Ferme le groupe principal

@@ -106,72 +106,83 @@ async function logoutRequest() {
     return data;
 }
 
-console.log(`%c📜 DOCUMENTATION DES ÉMOJIS ET FONCTIONS :
+console.groupCollapsed("%c📜 DOCUMENTATION COMPLÈTE auth.js", "color: #FFD700; font-weight: bold; font-size: 18px;");
 
-%c🔄 [AUTH] Requête d'authentification → %cIndique une requête en cours vers l'API.
-%c📤 Envoi des données → %cAffiche les données envoyées à l'API.
-%c📩 Réponse reçue → %cAffiche la réponse reçue de l'API.
-%c🚫 Erreur HTTP → %cIndique une erreur HTTP renvoyée par l'API.
-%c❌ Erreur → %cIndique une erreur lors de l'exécution.
+console.groupCollapsed("%c📌 ÉMOJIS & SIGNIFICATIONS", "color: #FFD700; font-weight: bold; font-size: 16px;");
+console.log(`%c🔄 [AUTH] Requête d'authentification → %cIndique une requête en cours vers l'API.`,
+    "color: #1E90FF; font-weight: bold;", "color: white;");
+console.log(`%c📤 Envoi des données → %cAffiche les données envoyées à l'API.`,
+    "color: #00FA9A; font-weight: bold;", "color: white;");
+console.log(`%c📩 Réponse reçue → %cAffiche la réponse reçue de l'API.`,
+    "color: #00FA9A; font-weight: bold;", "color: white;");
+console.log(`%c🚫 Erreur HTTP → %cIndique une erreur HTTP renvoyée par l'API.`,
+    "color: #FF4500; font-weight: bold;", "color: white;");
+console.log(`%c❌ Erreur → %cIndique une erreur lors de l'exécution.`,
+    "color: #FF0000; font-weight: bold;", "color: white;");
+console.groupEnd();
 
-%c🔑 [AUTH] Création de token → %cIndique la génération d'un token temporaire pour authentification.
-%c🔐 [AUTH] Création de token d'accès → %cGénération du token d'accès permanent.
-%c🆔 [AUTH] ID de compte → %cAffiche l'identifiant du compte utilisateur.
-%c✅ Action réussie → %cIndique qu'une action a été réalisée avec succès.
-%c⚠️ Échec d'une action → %cIndique qu'une action a échoué.
+console.groupCollapsed("%c🔑 AUTHENTIFICATION & TOKENS", "color: #FFD700; font-weight: bold; font-size: 16px;");
+console.log(`%c🔑 [AUTH] Création de token → %cIndique la génération d'un token temporaire pour authentification.`,
+    "color: #FFD700; font-weight: bold;", "color: white;");
+console.log(`%c🔐 [AUTH] Création de token d'accès → %cGénération du token d'accès permanent.`,
+    "color: #FFD700; font-weight: bold;", "color: white;");
+console.log(`%c🆔 [AUTH] ID de compte → %cAffiche l'identifiant du compte utilisateur.`,
+    "color: #32CD32; font-weight: bold;", "color: white;");
+console.log(`%c✅ Action réussie → %cIndique qu'une action a été réalisée avec succès.`,
+    "color: #32CD32; font-weight: bold;", "color: white;");
+console.log(`%c⚠️ Échec d'une action → %cIndique qu'une action a échoué.`,
+    "color: #FFA500; font-weight: bold;", "color: white;");
+console.groupEnd();
 
-%c🖥️ [AUTH] Création de session → %cCréation d'une session utilisateur après authentification.
-%c🚪 [LOGOUT] Déconnexion → %cSuppression du token d'accès et fermeture de session.
+console.groupCollapsed("%c🖥️ SESSIONS & DÉCONNEXION", "color: #00BFFF; font-weight: bold; font-size: 16px;");
+console.log(`%c🖥️ [AUTH] Création de session → %cCréation d'une session utilisateur après authentification.`,
+    "color: #00BFFF; font-weight: bold;", "color: white;");
+console.log(`%c🚪 [LOGOUT] Déconnexion → %cSuppression du token d'accès et fermeture de session.`,
+    "color: #DC143C; font-weight: bold;", "color: white;");
+console.groupEnd();
 
-%c---------------------------------------------
+console.groupCollapsed("%c📜 DOCUMENTATION DES FONCTIONS", "color: #FFD700; font-weight: bold; font-size: 18px;");
 
-%c🔹 Fonction requestAuth(url, content, type)
-%c   → Effectue une requête API vers TMDB avec la clé d'authentification privée.
-%c   → Permet d'envoyer ou de récupérer des données sécurisées.
-%c   → Gère automatiquement les erreurs et affiche les réponses API dans la console.
+// 🔑 AUTHENTIFICATION
+console.groupCollapsed("%c🔑 AUTHENTIFICATION", "color: #1E90FF; font-weight: bold;");
 
-%c🔹 Fonction createRequestToken()
-%c   → Demande la création d'un token temporaire pour l'authentification de l'utilisateur.
+console.groupCollapsed("%c🔹 requestAuth(url, content, type)", "color: #FFD700; font-weight: bold;");
+console.log(`%c   → Effectue une requête API vers TMDB avec la clé d'authentification privée.`, "color: white;");
+console.log(`%c   → Permet d'envoyer ou de récupérer des données sécurisées.`, "color: white;");
+console.log(`%c   → Gère automatiquement les erreurs et affiche les réponses API dans la console.`, "color: white;");
+console.groupEnd();
 
-%c🔹 Fonction createAccessToken(tmpToken)
-%c   → Utilise le token temporaire pour générer un token d'accès permanent.
+console.groupCollapsed("%c🔹 createRequestToken()", "color: #FFD700; font-weight: bold;");
+console.log(`%c   → Demande la création d'un token temporaire pour l'authentification de l'utilisateur.`, "color: white;");
+console.groupEnd();
 
-%c🔹 Fonction createSession()
-%c   → Crée une session utilisateur en utilisant le token d'accès.
+console.groupCollapsed("%c🔹 createAccessToken(tmpToken)", "color: #FFD700; font-weight: bold;");
+console.log(`%c   → Utilise le token temporaire pour générer un token d'accès permanent.`, "color: white;");
+console.groupEnd();
 
-%c🔹 Fonction logoutRequest()
-%c   → Demande la suppression du token d'accès pour déconnecter l'utilisateur.
+console.groupEnd(); // Fin du groupe AUTHENTIFICATION
 
-%c📌 Fin de la documentation.`,
-"color: #FFD700; font-weight: bold; font-size: 16px;",  // Titre principal
+// 🖥️ SESSION
+console.groupCollapsed("%c🖥️ SESSION", "color: #32CD32; font-weight: bold;");
 
-"color: #1E90FF; font-weight: bold;", "color: white;", // AUTH logs
-"color: #00FA9A; font-weight: bold;", "color: white;", 
-"color: #00FA9A; font-weight: bold;", "color: white;", 
-"color: #FF4500; font-weight: bold;", "color: white;", 
-"color: #FF0000; font-weight: bold;", "color: white;", 
+console.groupCollapsed("%c🔹 createSession()", "color: #FFD700; font-weight: bold;");
+console.log(`%c   → Crée une session utilisateur en utilisant le token d'accès.`, "color: white;");
+console.groupEnd();
 
-"color: #FFD700; font-weight: bold;", "color: white;", // Token logs
-"color: #FFD700; font-weight: bold;", "color: white;", 
-"color: #32CD32; font-weight: bold;", "color: white;", 
-"color: #32CD32; font-weight: bold;", "color: white;", 
-"color: #FFA500; font-weight: bold;", "color: white;", 
+console.groupEnd(); // Fin du groupe SESSION
 
-"color: #00BFFF; font-weight: bold;", "color: white;", // Session & Logout
-"color: #DC143C; font-weight: bold;", "color: white;", 
+// 🚪 DÉCONNEXION
+console.groupCollapsed("%c🚪 DÉCONNEXION", "color: #FF4500; font-weight: bold;");
 
-"color: grey; font-weight: bold;", // Séparateur
+console.groupCollapsed("%c🔹 logoutRequest()", "color: #FFD700; font-weight: bold;");
+console.log(`%c   → Demande la suppression du token d'accès pour déconnecter l'utilisateur.`, "color: white;");
+console.groupEnd();
 
-"color: #FFD700; font-weight: bold;", // Titres des fonctions
-"color: white;", "color: white;", "color: white;", 
+console.groupEnd(); // Fin du groupe DÉCONNEXION
 
-"color: #FFD700; font-weight: bold;", "color: white;", 
+console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
+console.groupEnd(); // Fin de la documentation générale
 
-"color: #FFD700; font-weight: bold;", "color: white;", 
+console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
 
-"color: #FFD700; font-weight: bold;", "color: white;", 
-
-"color: #FFD700; font-weight: bold;", "color: white;", 
-
-"color: #32CD32; font-weight: bold;" // Fin
-);    
+console.groupEnd(); // Ferme le groupe principal
