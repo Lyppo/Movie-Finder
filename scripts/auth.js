@@ -4,10 +4,9 @@ let SESSION_ID = ""; // ID de session
 
 // 🔐 Fonction d'authentification asynchrone
 async function requestAuth(url, content, type) {
-    console.groupCollapsed(`%c🔄 [AUTH] ${type} → ${url}`, "color: #1E90FF; font-weight: bold;");
+    logMessage('group', `[AUTH] ${type} → ${url}`); // Démarrer un groupe de log pour l'authentification
 
-    console.log("%c📤 Envoi des données :", "color: #00FA9A; font-weight: bold;");
-    console.table(content); // 🔍 Utilisation de console.table pour afficher les variables envoyées
+    logMessage('log', '📤 Envoi des données :', content); // Afficher les données envoyées
 
     try {
         const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
@@ -18,8 +17,7 @@ async function requestAuth(url, content, type) {
 
         const data = await response.json();
         
-        console.log("%c📩 Réponse reçue :", "color: #FFD700; font-weight: bold;");
-        console.table(data); // 🔍 Affichage de la réponse API sous forme de table
+        logMessage('log', '📩 Réponse reçue :', data); // Afficher la réponse API
 
         if (!response.ok) {
             throw new Error(`🚫 Erreur HTTP : ${response.status}`);
@@ -28,7 +26,7 @@ async function requestAuth(url, content, type) {
         console.groupEnd();
         return data;
     } catch (error) {
-        console.error("%c❌ Erreur :", "color: #FF0000; font-weight: bold;", error.message);
+        logMessage('error', '❌ Erreur :', error.message); // Afficher l'erreur
         console.groupEnd();
         return null;
     }
@@ -38,14 +36,13 @@ async function requestAuth(url, content, type) {
 async function createRequestToken() {
     let redirect_to = window.location.href.replace(/(\.html|\/index)$/, "") + "/popup.html";
 
-    console.groupCollapsed("%c🛠️ [AUTH] Création du token de requête...", "color: #FFA500; font-weight: bold;");
+    logMessage('group', "Création du token de requête..."); // Indiquer le début de la création du token
     const data = await requestAuth('https://api.themoviedb.org/4/auth/request_token', { redirect_to }, 'POST');
 
     if (data?.request_token) {
-        console.log("%c🔑 Token généré :", "color: #FFD700; font-weight: bold;");
-        console.table({ request_token: data.request_token });
+        logMessage('success', '🔑 Token généré :', { request_token: data.request_token });
     } else {
-        console.error("%c⚠️ Échec de la génération du token.", "color: #FF4500; font-weight: bold;");
+        logMessage('warn', "⚠️ Échec de la génération du token."); // Avertir en cas d'échec
     }
 
     console.groupEnd();
@@ -54,7 +51,7 @@ async function createRequestToken() {
 
 // 🔓 Création d'un token d'accès
 async function createAccessToken(tmpToken) {
-    console.groupCollapsed("%c🔐 [AUTH] Création du token d'accès...", "color: #00BFFF; font-weight: bold;");
+    logMessage('group', "[AUTH] Création du token d'accès..."); // Indiquer le début de la création du token d'accès
     const data = await requestAuth('https://api.themoviedb.org/4/auth/access_token', { request_token: tmpToken }, 'POST');
 
     if (data?.account_id && data?.access_token) {
@@ -63,10 +60,9 @@ async function createAccessToken(tmpToken) {
         setCookie("ACCOUNT_ID", ACCOUNT_ID);
         setCookie("ACCESS_TOKEN", ACCESS_TOKEN);
 
-        console.log("%c🆔 ID du compte et token d'accès créés :", "color: #32CD32; font-weight: bold;");
-        console.table({ ACCOUNT_ID, ACCESS_TOKEN });
+        logMessage('success', '🆔 ID du compte et token d\'accès créés :', { ACCOUNT_ID, ACCESS_TOKEN });
     } else {
-        console.error("%c⚠️ Échec de la création du token d'accès.", "color: #FF4500; font-weight: bold;");
+        logMessage('warn', "⚠️ Échec de la création du token d'accès."); // Avertir en cas d'échec
     }
 
     console.groupEnd();
@@ -74,7 +70,7 @@ async function createAccessToken(tmpToken) {
 
 // 🏁 Création d'une session
 async function createSession() {
-    console.groupCollapsed("%c🖥️ [AUTH] Création de la session...", "color: #8A2BE2; font-weight: bold;");
+    logMessage('group', "Création de la session..."); // Indiquer le début de la création de la session
     const data = await requestAuth('https://api.themoviedb.org/3/authentication/session/convert/4', 
         { access_token: ACCESS_TOKEN }, 'POST');
 
@@ -82,10 +78,9 @@ async function createSession() {
         SESSION_ID = data.session_id;
         setCookie("SESSION_ID", SESSION_ID);
 
-        console.log("%c✅ Session créée :", "color: #32CD32; font-weight: bold;");
-        console.table({ SESSION_ID });
+        logMessage('success', '✅ Session créée :', { SESSION_ID });
     } else {
-        console.error("%c⚠️ Échec de la création de la session.", "color: #FF4500; font-weight: bold;");
+        logMessage('warn', "⚠️ Échec de la création de la session."); // Avertir en cas d'échec
     }
 
     console.groupEnd();
@@ -93,96 +88,69 @@ async function createSession() {
 
 // 🚪 Déconnexion
 async function logoutRequest() {
-    console.groupCollapsed("%c🔴 [LOGOUT] Suppression du token d'accès...", "color: #DC143C; font-weight: bold;");
+    logMessage('group', "Suppression du token d'accès..."); // Indiquer le début de la suppression du token d'accès
     const data = await requestAuth('https://api.themoviedb.org/4/auth/access_token', { access_token: ACCESS_TOKEN }, 'DELETE');
 
     if (data?.success) {
-        console.log("%c✅ Token supprimé avec succès.", "color: #32CD32; font-weight: bold;");
+        logMessage('success', '✅ Token supprimé avec succès.');
     } else {
-        console.error("%c⚠️ Échec de la suppression du token.", "color: #FF4500; font-weight: bold;");
+        logMessage('warn', "⚠️ Échec de la suppression du token."); // Avertir en cas d'échec
     }
 
     console.groupEnd();
     return data;
 }
 
-console.groupCollapsed("%c📜 DOCUMENTATION COMPLÈTE auth.js", "color: #FFD700; font-weight: bold; font-size: 18px;");
-
-console.groupCollapsed("%c📌 ÉMOJIS & SIGNIFICATIONS", "color: #FFD700; font-weight: bold; font-size: 16px;");
-console.log(`%c🔄 [AUTH] Requête d'authentification → %cIndique une requête en cours vers l'API.`,
-    "color: #1E90FF; font-weight: bold;", "color: white;");
-console.log(`%c📤 Envoi des données → %cAffiche les données envoyées à l'API.`,
-    "color: #00FA9A; font-weight: bold;", "color: white;");
-console.log(`%c📩 Réponse reçue → %cAffiche la réponse reçue de l'API.`,
-    "color: #00FA9A; font-weight: bold;", "color: white;");
-console.log(`%c🚫 Erreur HTTP → %cIndique une erreur HTTP renvoyée par l'API.`,
-    "color: #FF4500; font-weight: bold;", "color: white;");
-console.log(`%c❌ Erreur → %cIndique une erreur lors de l'exécution.`,
-    "color: #FF0000; font-weight: bold;", "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c🔑 AUTHENTIFICATION & TOKENS", "color: #FFD700; font-weight: bold; font-size: 16px;");
-console.log(`%c🔑 [AUTH] Création de token → %cIndique la génération d'un token temporaire pour authentification.`,
-    "color: #FFD700; font-weight: bold;", "color: white;");
-console.log(`%c🔐 [AUTH] Création de token d'accès → %cGénération du token d'accès permanent.`,
-    "color: #FFD700; font-weight: bold;", "color: white;");
-console.log(`%c🆔 [AUTH] ID de compte → %cAffiche l'identifiant du compte utilisateur.`,
-    "color: #32CD32; font-weight: bold;", "color: white;");
-console.log(`%c✅ Action réussie → %cIndique qu'une action a été réalisée avec succès.`,
-    "color: #32CD32; font-weight: bold;", "color: white;");
-console.log(`%c⚠️ Échec d'une action → %cIndique qu'une action a échoué.`,
-    "color: #FFA500; font-weight: bold;", "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c🖥️ SESSIONS & DÉCONNEXION", "color: #00BFFF; font-weight: bold; font-size: 16px;");
-console.log(`%c🖥️ [AUTH] Création de session → %cCréation d'une session utilisateur après authentification.`,
-    "color: #00BFFF; font-weight: bold;", "color: white;");
-console.log(`%c🚪 [LOGOUT] Déconnexion → %cSuppression du token d'accès et fermeture de session.`,
-    "color: #DC143C; font-weight: bold;", "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c📜 DOCUMENTATION DES FONCTIONS", "color: #FFD700; font-weight: bold; font-size: 18px;");
-
-// 🔑 AUTHENTIFICATION
-console.groupCollapsed("%c🔑 AUTHENTIFICATION", "color: #1E90FF; font-weight: bold;");
-
-console.groupCollapsed("%c🔹 requestAuth(url, content, type)", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Effectue une requête API vers TMDB avec la clé d'authentification privée.`, "color: white;");
-console.log(`%c   → Permet d'envoyer ou de récupérer des données sécurisées.`, "color: white;");
-console.log(`%c   → Gère automatiquement les erreurs et affiche les réponses API dans la console.`, "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c🔹 createRequestToken()", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Demande la création d'un token temporaire pour l'authentification de l'utilisateur.`, "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c🔹 createAccessToken(tmpToken)", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Utilise le token temporaire pour générer un token d'accès permanent.`, "color: white;");
-console.groupEnd();
-
-console.groupEnd(); // Fin du groupe AUTHENTIFICATION
-
-// 🖥️ SESSION
-console.groupCollapsed("%c🖥️ SESSION", "color: #32CD32; font-weight: bold;");
-
-console.groupCollapsed("%c🔹 createSession()", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Crée une session utilisateur en utilisant le token d'accès.`, "color: white;");
-console.groupEnd();
-
-console.groupEnd(); // Fin du groupe SESSION
-
-// 🚪 DÉCONNEXION
-console.groupCollapsed("%c🚪 DÉCONNEXION", "color: #FF4500; font-weight: bold;");
-
-console.groupCollapsed("%c🔹 logoutRequest()", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Demande la suppression du token d'accès pour déconnecter l'utilisateur.`, "color: white;");
-console.groupEnd();
-
-console.groupEnd(); // Fin du groupe DÉCONNEXION
-
-console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
-console.groupEnd(); // Fin de la documentation générale
-
-console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
-
-console.groupEnd(); // Ferme le groupe principal
+// Appel de la fonction pour afficher la documentation
+afficherDocumentation(
+    "auth.js",
+    [
+        { emoji: "🔐", description: "Fonction d'authentification", couleur: "color: #1E90FF; font-weight: bold;" },
+        { emoji: "🔑", description: "Création d'un token de requête", couleur: "color: #FFD700; font-weight: bold;" },
+        { emoji: "🔓", description: "Création d'un token d'accès", couleur: "color: #00BFFF; font-weight: bold;" },
+        { emoji: "🏁", description: "Création d'une session", couleur: "color: #8A2BE2; font-weight: bold;" },
+        { emoji: "🚪", description: "Déconnexion", couleur: "color: #DC143C; font-weight: bold;" }
+    ],
+    [
+        {
+            nom: "requestAuth(url, content, type)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Envoie une requête d'authentification à l'API TMDB.",
+                "Gère les erreurs et affiche les réponses dans la console."
+            ]
+        },
+        {
+            nom: "createRequestToken()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Crée un token de requête pour l'authentification de l'utilisateur.",
+                "Redirige l'utilisateur après la génération du token."
+            ]
+        },
+        {
+            nom: "createAccessToken(tmpToken)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Échange un token de requête temporaire contre un token d'accès permanent.",
+                "Stocke l'ID du compte et le token d'accès dans des cookies."
+            ]
+        },
+        {
+            nom: "createSession()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Crée une session pour l'utilisateur avec le token d'accès.",
+                "Stocke l'ID de session dans un cookie."
+            ]
+        },
+        {
+            nom: "logoutRequest()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Supprime le token d'accès de l'utilisateur pour le déconnexion.",
+                "Affiche le succès ou l'échec de la déconnexion dans la console."
+            ]
+        }
+    ]
+);

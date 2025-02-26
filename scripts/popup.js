@@ -1,60 +1,84 @@
-// popup.js
-
 function ouvrirPopupLogin(requestToken) {
-    console.groupCollapsed("🪟 Ouverture de la popup de connexion...");
+    logMessage('group', "🪟 Ouverture de la popup de connexion..."); // Démarre le groupe de logs
     return new Promise((resolve) => {
-        // Vérification de la présence du requestToken
         if (!requestToken) {
-            console.error("❌ Erreur : request_token manquant !");
-            console.groupEnd();
-            return resolve(false); // Sortir de la fonction si le token est manquant
+            logMessage('error', "❌ Erreur : request_token manquant !");
+            logMessage('group', null); // Ferme le groupe de logs
+            return resolve(false);
         }
 
-        // Définition des dimensions et position de la popup
         const POPUP_WIDTH = 640;
         const POPUP_HEIGHT = 360;
         const left = (window.screen.width - POPUP_WIDTH) / 2;
         const top = (window.screen.height - POPUP_HEIGHT) / 2;
-        console.log(`🪟 Ouverture de la popup à (${left}, ${top}) avec dimensions ${POPUP_WIDTH}x${POPUP_HEIGHT}`);
+        logMessage('log', `🪟 Ouverture de la popup à (${left}, ${top}) avec dimensions ${POPUP_WIDTH}x${POPUP_HEIGHT}`);
 
-        // Ouverture de la popup de connexion avec des options de fenêtre
         const popup = window.open(
             `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(requestToken)}`,
             "popupLogin",
             `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${top},left=${left},resizable=no,scrollbars=no,menubar=no,toolbar=no,location=no,status=no`
         );
 
-        // Vérification si la popup a été ouverte avec succès
         if (!popup) {
-            console.error("❌ Impossible d'ouvrir la popup (bloquée par le navigateur ?)");
-            console.groupEnd();
-            return resolve(false); // Sortir de la fonction si la popup ne s'ouvre pas
+            logMessage('error', "❌ Impossible d'ouvrir la popup (bloquée par le navigateur ?)");
+            logMessage('group', null);
+            return resolve(false);
         }
-        console.log("✅ Popup ouverte avec succès !");
+        logMessage('success', "✅ Popup ouverte avec succès !");
 
-        // Écouteur de messages provenant de la popup
         const messageListener = (event) => {
-            // Vérification de l'origine du message
             if (event.origin !== window.location.origin) {
-                console.error("❌ Origine non autorisée !");
-                console.groupEnd();
-                return resolve(false); // Sortir de la fonction si l'origine n'est pas autorisée
+                logMessage('error', "❌ Origine non autorisée !");
+                logMessage('group', null);
+                return resolve(false);
             }
 
-            // Vérification si l'utilisateur est authentifié
             if (event.data === "authenticated") {
-                console.log("✅ Utilisateur authentifié !");
-                window.removeEventListener("message", messageListener); // Retrait de l'écouteur
-                console.groupEnd();
-                return resolve(true); // Résoudre la promesse avec succès
+                logMessage('success', "✅ Utilisateur authentifié !");
+                window.removeEventListener("message", messageListener);
+                logMessage('group', null);
+                return resolve(true);
             } else {
-                console.log(`📩 Message reçu de la popup : ${event.data}`);
+                logMessage('log', `📩 Message reçu de la popup : ${event.data}`);
             }
         };
 
-        // Ajout de l'écouteur de message
         window.addEventListener("message", messageListener);
-        console.log("👂 Écouteur de message ajouté pour la popup.");
-        console.groupEnd();
+        logMessage('info', "👂 Écouteur de message ajouté pour la popup.");
+
+        // Optionnel : fermer la popup après un certain temps si l'utilisateur ne s'authentifie pas
+        setTimeout(() => {
+            if (popup && !popup.closed) {
+                logMessage('warn', "⚠️ La popup se ferme après 30 secondes d'inactivité.");
+                popup.close();
+            }
+        }, 30000); // 30 secondes
+
+        logMessage('group', null); // Ferme le groupe de logs
     });
 }
+
+// Appel de la fonction pour afficher la documentation
+afficherDocumentation(
+    "popup.js",
+    [
+        { emoji: "🪟", description: "Ouverture de la popup de connexion", couleur: "color: #1E90FF; font-weight: bold;" },
+        { emoji: "❌", description: "Erreur lors de l'ouverture", couleur: "color: #FF4500; font-weight: bold;" },
+        { emoji: "✅", description: "Popup ouverte avec succès", couleur: "color: #32CD32; font-weight: bold;" },
+        { emoji: "📩", description: "Message reçu de la popup", couleur: "color: lightblue; font-weight: bold;" },
+        { emoji: "👂", description: "Écouteur de message ajouté", couleur: "color: #FFD700; font-weight: bold;" }
+    ],
+    [
+        {
+            nom: "ouvrirPopupLogin(requestToken)",
+            couleur: "color: #1E90FF; font-weight: bold;",
+            descriptions: [
+                "Ouvre une popup de connexion pour l'utilisateur.",
+                "Vérifie la présence du requestToken et gère les erreurs si absent.",
+                "Définit la position et la taille de la popup.",
+                "Ajoute un écouteur de message pour recevoir des notifications d'authentification.",
+                "Résout la promesse avec succès si l'utilisateur est authentifié."
+            ]
+        }
+    ]
+);

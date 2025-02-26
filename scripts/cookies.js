@@ -2,10 +2,10 @@ let cookies = {}; // 🍪 Stockage des cookies
 
 // 🔹 Fonction pour récupérer les cookies
 function getCookies() {
-    console.groupCollapsed("📥 %cChargement des cookies...", "color: #1E90FF; font-weight: bold;");
+    logMessage('group', "Chargement des cookies..."); // Démarrer un groupe de log pour le chargement des cookies
 
     if (!document.cookie) {
-        console.warn("⚠️ %cAucun cookie trouvé.", "color: orange; font-weight: bold;");
+        logMessage('warn', "Aucun cookie trouvé."); // Avertir si aucun cookie n'est trouvé
         console.groupEnd();
         return;
     }
@@ -20,18 +20,17 @@ function getCookies() {
         }
     }
 
-    console.table(cookies); // 📊 Affichage sous forme de tableau
-    console.log(`🎯 %cTotal cookies chargés : %c${Object.keys(cookies).length}`, 
-                "color: lightblue; font-weight: bold;", "color: #32CD32; font-weight: bold;"); // Nombre total en vert
-    console.groupEnd();
+    logMessage('log', "Cookies chargés :", cookies); // Afficher les cookies sous forme de tableau
+    logMessage('log', `Total cookies chargés : ${Object.keys(cookies).length}`); // Nombre total de cookies
+    console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
 }
 
 // 🔹 Ajouter ou mettre à jour un cookie
 function setCookie(name, value) {
-    console.groupCollapsed("📤 %cAjout d'un cookie...", "color: #FFD700; font-weight: bold;");
+    logMessage('group', "Ajout d'un cookie..."); // Démarrer un groupe de log pour l'ajout de cookie
 
     if (!name || !value) {
-        console.warn("⚠️ %cImpossible d'ajouter un cookie : Nom et valeur requis !", "color: red; font-weight: bold;");
+        logMessage('warn', "Impossible d'ajouter un cookie : Nom et valeur requis !"); // Avertir si le nom ou la valeur est manquant
         console.groupEnd();
         return;
     }
@@ -39,24 +38,17 @@ function setCookie(name, value) {
     document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${2592000}; path=/`; // Durée de vie : 30 jours
     cookies[name] = value;
 
-    console.table({ [name]: value }); // 📊 Affichage sous forme de tableau
-
-    console.log(`🍪 %cCookie ajouté : %c${name}%c = %c${value}`, 
-                "color: #1E90FF; font-weight: bold;",  // Préfixe
-                "color: blue; font-weight: bold; background-color: darkgray; padding: 2px 5px; border-radius: 5px;", // Clé en bleu sur fond gris
-                "color: inherit;", // Séparateur normal
-                "color: green; font-weight: bold;" // Valeur en vert
-    );
-    console.groupEnd();
+    logMessage('log', "Cookie ajouté :", { [name]: value }); // Afficher le cookie ajouté sous forme de tableau
+    logMessage('log', `Cookie : ${name} = ${value}`); // Afficher le nom et la valeur du cookie
+    console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
 }
 
 // 🔹 Supprimer un cookie spécifique
 function clearCookie(name) {
-    console.groupCollapsed("🗑️ %cSuppression d'un cookie...", "color: #FF4500; font-weight: bold;");
-    
+    logMessage('group', "Suppression d'un cookie..."); // Démarrer un groupe de log pour la suppression de cookie
+
     if (!cookies[name]) {
-        console.warn(`⚠️ %cLe cookie "%c${name}%c" n'existe pas.`, 
-                     "color: orange; font-weight: bold;", "color: red; font-weight: bold;", "color: inherit;");
+        logMessage('warn', `Le cookie "${name}" n'existe pas.`); // Avertir si le cookie n'existe pas
         console.groupEnd();
         return;
     }
@@ -64,54 +56,49 @@ function clearCookie(name) {
     document.cookie = `${name}=; max-age=0; path=/`;
     delete cookies[name];
 
-    console.table(cookies); // 📊 Mise à jour du tableau après suppression
-
-    console.log(`🗑️ %cCookie supprimé : %c${name}`, 
-                "color: red; font-weight: bold;",  // Titre en rouge
-                "color: #FF4500; font-weight: bold;" // Nom du cookie en orange foncé
-    );
-    console.groupEnd();
+    logMessage('log', "Cookies après suppression :", cookies); // Afficher les cookies restants après suppression
+    logMessage('log', `Cookie supprimé : ${name}`); // Afficher le nom du cookie supprimé
+    console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
 }
 
-console.groupCollapsed("%c📜 DOCUMENTATION COMPLÈTE cookies.js", "color: #FFD700; font-weight: bold; font-size: 18px;");
-
-console.groupCollapsed("%c📌 SIGNIFICATION DES ÉMOJIS", "color: #FFD700; font-weight: bold; font-size: 16px;");
-console.log(`%c🍪 Stockage des cookies → %cVariable contenant les cookies en mémoire.`,
-    "color: #32CD32; font-weight: bold;", "color: white;");
-console.log(`%c📥 Chargement des cookies → %cLecture et affichage des cookies stockés.`,
-    "color: #1E90FF; font-weight: bold;", "color: white;");
-console.log(`%c📤 Ajout d'un cookie → %cInsertion ou mise à jour d'un cookie.`,
-    "color: #FFD700; font-weight: bold;", "color: white;");
-console.log(`%c🗑️ Suppression d'un cookie → %cEffacement d'un cookie spécifique.`,
-    "color: #FF4500; font-weight: bold;", "color: white;");
-console.log(`%c⚠️ Avertissement → %cIndique une erreur ou un problème potentiel.`,
-    "color: orange; font-weight: bold;", "color: white;");
-console.log(`%c📊 Affichage tableau → %cAffiche les données sous forme de tableau.`,
-    "color: lightblue; font-weight: bold;", "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c🔹 FONCTIONS DISPONIBLES", "color: #FFD700; font-weight: bold; font-size: 16px;");
-
-console.groupCollapsed("%c📥 getCookies()", "color: #1E90FF; font-weight: bold;");
-console.log(`%c   → Récupère tous les cookies stockés dans le navigateur.`, "color: white;");
-console.log(`%c   → Stocke les cookies dans un objet JavaScript.`, "color: white;");
-console.log(`%c   → Affiche les cookies sous forme de tableau dans la console.`, "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c📤 setCookie(name, value)", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Ajoute un cookie ou met à jour sa valeur.`, "color: white;");
-console.log(`%c   → Le cookie est stocké pour une durée de 30 jours.`, "color: white;");
-console.log(`%c   → Affiche le cookie ajouté sous forme de tableau.`, "color: white;");
-console.groupEnd();
-
-console.groupCollapsed("%c🗑️ clearCookie(name)", "color: #FF4500; font-weight: bold;");
-console.log(`%c   → Supprime un cookie spécifique en le mettant à expiration.`, "color: white;");
-console.log(`%c   → Met à jour la liste des cookies après suppression.`, "color: white;");
-console.log(`%c   → Affiche un message si le cookie n'existe pas.`, "color: white;");
-console.groupEnd();
-
-console.groupEnd(); // Ferme le groupe des fonctions
-
-console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
-
-console.groupEnd(); // Ferme le groupe principal
+// Appel de la fonction pour afficher la documentation
+afficherDocumentation(
+    "cookies.js",
+    [
+        { emoji: "🍪", description: "Stockage des cookies", couleur: "color: #32CD32; font-weight: bold;" },
+        { emoji: "📥", description: "Chargement des cookies", couleur: "color: #1E90FF; font-weight: bold;" },
+        { emoji: "📤", description: "Ajout d'un cookie", couleur: "color: #FFD700; font-weight: bold;" },
+        { emoji: "🗑️", description: "Suppression d'un cookie", couleur: "color: #FF4500; font-weight: bold;" },
+        { emoji: "⚠️", description: "Avertissement", couleur: "color: orange; font-weight: bold;" },
+        { emoji: "📊", description: "Affichage tableau", couleur: "color: lightblue; font-weight: bold;" }
+    ],
+    [
+        {
+            nom: "📥 getCookies()",
+            couleur: "color: #1E90FF; font-weight: bold;",
+            descriptions: [
+                "Récupère tous les cookies stockés dans le navigateur.",
+                "Stocke les cookies dans un objet JavaScript.",
+                "Affiche les cookies sous forme de tableau dans la console."
+            ]
+        },
+        {
+            nom: "📤 setCookie(name, value)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Ajoute un cookie ou met à jour sa valeur.",
+                "Le cookie est stocké pour une durée de 30 jours.",
+                "Affiche le cookie ajouté sous forme de tableau."
+            ]
+        },
+        {
+            nom: "🗑️ clearCookie(name)",
+            couleur: "color: #FF4500; font-weight: bold;",
+            descriptions: [
+                "Supprime un cookie spécifique en le mettant à expiration.",
+                "Met à jour la liste des cookies après suppression.",
+                "Affiche un message si le cookie n'existe pas."
+            ]
+        }
+    ]
+);

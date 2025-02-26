@@ -1,23 +1,21 @@
 async function userInterface(zenith) {
-
-    console.groupCollapsed("creation du profil utilisateur");
+    logMessage('group', "👤 Création du profil utilisateur...");
 
     let userInterface = document.createElement("div");
     userInterface.id = "userInterface";
     zenith.appendChild(userInterface);
+
     if (await loged()) {
         setuploged(userInterface);
-    }
-    else {
+    } else {
         setuplogin(userInterface);
     }
 
-    console.groupEnd();
+    logMessage('group', null);
 }
 
 function setuplogin(userInterface = document.getElementById("userInterface")) {
-
-    console.groupCollapsed("🟠 Configuration de la fonction de connection"); // Début du groupe de logs
+    logMessage('group', "🟠 Configuration de la fonction de connexion"); // Début du groupe de logs
 
     let btn = document.createElement("button");
     btn.id = "btnLogin";
@@ -25,11 +23,10 @@ function setuplogin(userInterface = document.getElementById("userInterface")) {
     btn.addEventListener("click", login);
     userInterface.appendChild(btn);
 
-    console.groupEnd();
+    logMessage('group', null);
 }
 
 async function setuploged(userInterface = document.getElementById("userInterface")) {
-
     await createPDP(userInterface);
 
     let div = document.createElement("div");
@@ -40,10 +37,9 @@ async function setuploged(userInterface = document.getElementById("userInterface
     div.style.justifyItems = "center";
     div.style.border = "1px solid gray";
 
-
     userInterface.appendChild(div);
 
-    console.groupCollapsed("🟠 Configuration de la fonction de controle utilisateur"); // Début du groupe de logs
+    logMessage('group', "🟠 Configuration de la fonction de contrôle utilisateur"); // Début du groupe de logs
 
     let btn = document.createElement("button");
     btn.id = "btnLogout";
@@ -51,15 +47,14 @@ async function setuploged(userInterface = document.getElementById("userInterface
     btn.addEventListener("click", logout);
     div.appendChild(btn);
 
-    console.groupEnd();
+    logMessage('group', null);
 }
 
 function setupUI() {
+    logMessage('group', "🟠 Configuration de la page"); // Début du groupe de logs
 
-    console.groupCollapsed("🟠 Configuration de la page"); // Début du groupe de logs
-
-    document.querySelectorAll("noscript").forEach((element) => {
-        console.log("🧹 Suppression de l'élément <noscript>...");
+    document.querySelectorAll(".no-js").forEach((element) => {
+        logMessage('log', "🧹 Suppression de l'élément <noscript>...");
         element.remove();
     });
 
@@ -82,11 +77,11 @@ function setupUI() {
     let containerImg = document.createElement("div");
     containerImg.id = "container-img";
 
-    let titele = document.createElement("h2");
-    titele.textContent = "Default Movie";
+    let title = document.createElement("h2");
+    title.textContent = "Default Movie";
 
     app.appendChild(containerImg);
-    app.appendChild(titele);
+    app.appendChild(title);
     zenith.appendChild(poster);
 
     let button = document.createElement("div");
@@ -103,8 +98,8 @@ function setupUI() {
 
     button.appendChild(b1);
     button.appendChild(b2);
-    
-    console.groupEnd();
+
+    logMessage('group', null);
 }
 
 async function loadImage(element, imagePath) {
@@ -122,12 +117,12 @@ async function loadImage(element, imagePath) {
     ];
 
     // Afficher la largeur de l'élément
-    console.log("📏 Élément largeur:", element.clientWidth);
+    logMessage('log', "📏 Élément largeur:", element.clientWidth);
 
     // Fonction pour calculer le flou
     function calculateBlur(elementWidth, loadedWidth) {
         const blur = Math.max(15 - (loadedWidth / 20), 0); // Ajuster selon besoin
-        console.log(`🌫️ Calcul du flou: ${blur} (Élément Largeur: ${elementWidth}, Chargé Largeur: ${loadedWidth})`);
+        logMessage('log', `🌫️ Calcul du flou: ${blur} (Élément Largeur: ${elementWidth}, Chargé Largeur: ${loadedWidth})`);
         return blur;
     }
 
@@ -142,14 +137,14 @@ async function loadImage(element, imagePath) {
         // Si l'indice est inférieur à lastLoadedIndex, ne rien faire
         if (lastLoadedIndex >= index) return;
 
-        console.log(`🔄 Chargement de l'image à l'indice ${index}: ${res.size}`);
+        logMessage('log', `🔄 Chargement de l'image à l'indice ${index}: ${res.size}`);
         
         let img = new Image();
         img.src = `https://image.tmdb.org/t/p/${res.size}${imagePath}`;
 
         // Lorsque l'image est chargée
         img.onload = () => {
-            console.log(`✅ Image chargée: ${img.src}`);
+            logMessage('log', `✅ Image chargée: ${img.src}`);
             lastLoadedIndex = index; // Mettre à jour l'indice
             element.src = img.src; // Changer le src de l'élément
             element.style.filter = `blur(${calculateBlur(element.clientWidth, res.width)}px)`; // Appliquer le flou
@@ -174,20 +169,23 @@ async function loadImage(element, imagePath) {
 
 // Exemple d'utilisation
 async function createPDP(userInterface) {
-    console.groupCollapsed("🔍 Chargement des données utilisateur..."); // Message de débogage
+    logMessage('group', "🔍 Chargement des données utilisateur..."); // Message de débogage
     let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
+    
     let pdp = document.createElement("img");
     pdp.id = "pdp";
     pdp.style.width = "65px";  // Largeur fixe
     pdp.style.height = "65px"; // Hauteur fixe
     pdp.style.objectFit = "cover"; // Remplit sans déformation
     pdp.style.objectPosition = "center"; // Centre l'image si besoin
-    pdp.style.borderRadius = "50%"; /* Si tu veux un effet rond */
-    console.log("🔍 Chargement de l'image pour l'utilisateur...");
+    pdp.style.borderRadius = "50%"; // Effet rond
+
+    logMessage('log', "🔍 Chargement de l'image pour l'utilisateur...");
     userInterface.appendChild(pdp);
     loadImage(pdp, data.avatar.tmdb.avatar_path);
+    
     pdp.addEventListener("mouseenter", showOverlay); // Quand on entre dans pdp
-    console.groupEnd();
+    logMessage('group', null);
 }
 
 function showOverlay(event) {
@@ -205,13 +203,90 @@ function DiscareOverlay(event) {
 }
 
 async function test() {
-    console.log("test");
+    logMessage('log', "🔍 Test en cours...");
 }
 
 function setupTest() {
-    console.groupCollapsed("🔧 Configuration des tests..."); // Message de débogage
+    logMessage('group', "🔧 Configuration des tests..."); // Message de débogage
     creerElementsDepuisHTML(`<button style="top: 0px; left: 0px;" id="test">Test</button>`, "#zenith")
         .addEventListener("click", test);
-    console.log('🔧 Bouton de test créé.'); // Message de débogage
-    console.groupEnd();
+    logMessage('log', '🔧 Bouton de test créé.'); // Message de débogage
+    logMessage('group', null);
 }
+
+// Appel de la fonction pour afficher la documentation
+afficherDocumentation(
+    "setup.js",
+    [
+        { emoji: "👤", description: "Création du profil utilisateur", couleur: "color: #1E90FF; font-weight: bold;" },
+        { emoji: "🟠", description: "Configuration de la fonction de connexion", couleur: "color: #FF8C00; font-weight: bold;" },
+        { emoji: "🔍", description: "Chargement des données utilisateur", couleur: "color: #32CD32; font-weight: bold;" },
+        { emoji: "✅", description: "Image chargée avec succès", couleur: "color: #32CD32; font-weight: bold;" },
+        { emoji: "❌", description: "Erreur d'image ou de données", couleur: "color: #FF4500; font-weight: bold;" }
+    ],
+    [
+        {
+            nom: "userInterface(zenith)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Crée et configure l'interface utilisateur.",
+                "Vérifie si l'utilisateur est connecté et configure l'interface en conséquence."
+            ]
+        },
+        {
+            nom: "setuplogin(userInterface)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Configure l'interface pour la connexion de l'utilisateur.",
+                "Ajoute un bouton de connexion et définit un écouteur d'événements."
+            ]
+        },
+        {
+            nom: "setuploged(userInterface)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Configure l'interface lorsque l'utilisateur est connecté.",
+                "Ajoute un bouton de déconnexion et affiche les informations utilisateur."
+            ]
+        },
+        {
+            nom: "setupUI()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Configure la page principale de l'application.",
+                "Supprime les éléments inutiles et initialise les éléments de l'interface."
+            ]
+        },
+        {
+            nom: "loadImage(element, imagePath)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Charge une image à partir d'un chemin donné et ajuste son flou selon la largeur de l'élément.",
+                "Gère plusieurs résolutions d'image."
+            ]
+        },
+        {
+            nom: "createPDP(userInterface)",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Crée le profil utilisateur avec l'image et les données de l'utilisateur.",
+                "Ajoute l'image à l'interface et configure les événements associés."
+            ]
+        },
+        {
+            nom: "test()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Fonction de test pour vérifier le fonctionnement des éléments."
+            ]
+        },
+        {
+            nom: "setupTest()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Configure un bouton de test dans l'interface.",
+                "Ajoute un écouteur d'événements pour exécuter la fonction de test."
+            ]
+        }
+    ]
+);

@@ -8,25 +8,30 @@ async function loged() {
     if (!ACCESS_TOKEN) {
         return false;
     } else {
-        console.groupCollapsed(`[LOGGED]`); // Démarre un groupe de logs
-        console.log("✅ Vérification de l'authentification...");
+        logMessage('group', '[LOGGED]'); 
+        logMessage('log', "✅ Vérification de l'authentification...");
 
-        const data = await request("https://api.themoviedb.org/3/authentication");
-        console.log("✅ Résultat :", data);
-
-        console.groupEnd(); // Termine le groupe de logs
-        return data.success;
+        try {
+            const data = await request("https://api.themoviedb.org/3/authentication");
+            logMessage('log', "✅ Résultat :", data);
+            console.groupEnd(); 
+            return data.success;
+        } catch (error) {
+            logMessage('error', "Erreur lors de la vérification de l'authentification :", error);
+            console.groupEnd();
+            return false;
+        }
     }
 }
 
 async function login(event) {
-    event?.preventDefault(); // Empêche le rechargement de la page
+    event?.preventDefault();
 
     if (event?.target) {
         event.target.removeEventListener("click", login);
     }
 
-    console.groupCollapsed("🔵 Tentative de connexion..."); // Message de débogage
+    logMessage('group', "🔵 Tentative de connexion...");
 
     const tmpToken = await createRequestToken();
     let authenticated = false;
@@ -35,82 +40,71 @@ async function login(event) {
     while (!authenticated && attempts < 3) {
         authenticated = await ouvrirPopupLogin(tmpToken);
         if (!authenticated) {
-            console.warn(`❌ Tentative d'authentification échouée (${attempts + 1}/3)`); // Message de débogage
+            logMessage('warn', `❌ Tentative d'authentification échouée (${attempts + 1}/3)`);
             attempts++;
         }
     }
 
     if (!authenticated) {
-        console.error("🚨 Échec de l'authentification après 3 tentatives."); // Message d'erreur
-        console.groupEnd(); // Termine le groupe de logs
+        logMessage('error', "🚨 Échec de l'authentification après 3 tentatives.");
+        console.groupEnd();
         event.target.addEventListener("click", login);
         return;
     }
 
-    await createAccessToken(tmpToken);
-    await createSession();
+    try {
+        await createAccessToken(tmpToken);
+        await createSession();
 
-    let userInterface = document.querySelectorAll("#userInterface > *");
+        let userInterface = document.querySelectorAll("#userInterface > *");
 
-    for (let i = 0; i < userInterface.length; i++) {
-        userInterface[i].remove();
+        // Suppression des éléments de l'interface utilisateur
+        userInterface.forEach(el => el.remove());
+
+        setuploged();
+        logMessage('log', "🔵 Connexion réussie !");
+    } catch (error) {
+        logMessage('error', "Erreur lors de la création du token ou de la session :", error);
     }
 
-    setuploged();
-
-    console.log("🔵 Connexion réussie !"); // Message de débogage
-    console.groupEnd(); // Termine le groupe de logs
+    console.groupEnd();
 }
 
-console.groupCollapsed("%c📜 DOCUMENTATION COMPLÈTE login.js", "color: #FFD700; font-weight: bold; font-size: 18px;");
-
-// 📌 SIGNIFICATION DES ÉMOJIS
-console.groupCollapsed("%c📌 SIGNIFICATION DES ÉMOJIS", "color: #FFD700; font-weight: bold; font-size: 16px;");
-console.log(`%c🍪 Stockage des cookies → %cVariable contenant les cookies en mémoire.`,
-    "color: #32CD32; font-weight: bold;", "color: white;");
-console.log(`%c📥 Chargement des cookies → %cLecture et affichage des cookies stockés.`,
-    "color: #1E90FF; font-weight: bold;", "color: white;");
-console.log(`%c📤 Ajout d'un cookie → %cInsertion ou mise à jour d'un cookie.`,
-    "color: #FFD700; font-weight: bold;", "color: white;");
-console.log(`%c🗑️ Suppression d'un cookie → %cEffacement d'un cookie spécifique.`,
-    "color: #FF4500; font-weight: bold;", "color: white;");
-console.log(`%c⚠️ Avertissement → %cIndique une erreur ou un problème potentiel.`,
-    "color: orange; font-weight: bold;", "color: white;");
-console.log(`%c📊 Affichage tableau → %cAffiche les données sous forme de tableau.`,
-    "color: lightblue; font-weight: bold;", "color: white;");
-console.groupEnd();
-
-// 🔹 FONCTIONS DISPONIBLES
-console.groupCollapsed("%c🔹 FONCTIONS DISPONIBLES", "color: #FFD700; font-weight: bold; font-size: 16px;");
-
-// 🔄 CHARGEMENT DES IDENTIFIANTS
-console.groupCollapsed("%c📥 CHARGEMENT DES IDENTIFIANTS", "color: #1E90FF; font-weight: bold;");
-console.groupCollapsed("%c🔹 load()", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Charge les identifiants (ACCESS_TOKEN, ACCOUNT_ID, SESSION_ID) depuis les cookies.`, "color: white;");
-console.groupEnd();
-console.groupEnd(); // Fin du groupe CHARGEMENT DES IDENTIFIANTS
-
-// 🔑 VÉRIFICATION D'AUTHENTIFICATION
-console.groupCollapsed("%c🔑 VÉRIFICATION D'AUTHENTIFICATION", "color: #32CD32; font-weight: bold;");
-console.groupCollapsed("%c🔹 loged()", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Vérifie si l'utilisateur est authentifié en consultant l'API TMDB.`, "color: white;");
-console.log(`%c   → Affiche les logs de vérification dans la console.`, "color: white;");
-console.log(`%c   → Retourne un booléen indiquant l'état de l'authentification.`, "color: white;");
-console.groupEnd();
-console.groupEnd(); // Fin du groupe VÉRIFICATION D'AUTHENTIFICATION
-
-// 🔵 CONNEXION
-console.groupCollapsed("%c🔵 CONNEXION", "color: #00BFFF; font-weight: bold;");
-console.groupCollapsed("%c🔹 login(event)", "color: #FFD700; font-weight: bold;");
-console.log(`%c   → Gère la connexion de l'utilisateur et empêche le rechargement de la page.`, "color: white;");
-console.log(`%c   → Génère un token temporaire et tente l'authentification via une pop-up.`, "color: white;");
-console.log(`%c   → Limite à 3 tentatives d'authentification en cas d'échec.`, "color: white;");
-console.log(`%c   → Enregistre le token d'accès et crée une session en cas de succès.`, "color: white;");
-console.log(`%c   → Met à jour l'interface utilisateur après connexion.`, "color: white;");
-console.groupEnd();
-console.groupEnd(); // Fin du groupe CONNEXION
-
-console.groupEnd(); // Fin du groupe FONCTIONS DISPONIBLES
-
-console.log(`%c📌 Fin de la documentation.`, "color: #32CD32; font-weight: bold;");
-console.groupEnd(); // Fin de la documentation générale
+// Appel de la fonction pour afficher la documentation
+afficherDocumentation(
+    "login.js",
+    [
+        { emoji: "✅", description: "Vérification de l'authentification", couleur: "color: #32CD32; font-weight: bold;" },
+        { emoji: "❌", description: "Tentative d'authentification échouée", couleur: "color: #FF4500; font-weight: bold;" },
+        { emoji: "🚨", description: "Échec de l'authentification", couleur: "color: #FF4500; font-weight: bold;" },
+        { emoji: "🔵", description: "Tentative de connexion", couleur: "color: #1E90FF; font-weight: bold;" }
+    ],
+    [
+        {
+            nom: "load()",
+            couleur: "color: #FFD700; font-weight: bold;",
+            descriptions: [
+                "Charge les cookies ACCESS_TOKEN, ACCOUNT_ID et SESSION_ID."
+            ]
+        },
+        {
+            nom: "loged()",
+            couleur: "color: #1E90FF; font-weight: bold;",
+            descriptions: [
+                "Vérifie si l'utilisateur est authentifié.",
+                "Affiche les logs de la vérification d'authentification.",
+                "Renvoie vrai si l'utilisateur est authentifié, faux sinon."
+            ]
+        },
+        {
+            nom: "login(event)",
+            couleur: "color: #1E90FF; font-weight: bold;",
+            descriptions: [
+                "Gère le processus de connexion de l'utilisateur.",
+                "Empêche le rechargement de la page lors de la connexion.",
+                "Effectue plusieurs tentatives d'authentification (maximum 3).",
+                "Affiche les messages de débogage et d'erreur selon le résultat."
+            ]
+        }
+    ]
+);

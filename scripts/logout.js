@@ -1,35 +1,33 @@
 async function logoutClear() {
-    console.groupCollapsed("🔴 Suppression des données de déconnexion..."); // Début du groupe de logs
+    console.groupCollapsed("%c🔴 SUPPRESSION DES DONNÉES DE DÉCONNEXION", "color: #FF4500; font-weight: bold;");
 
     try {
         const sessionDeletion = await request(
             "https://api.themoviedb.org/3/authentication/session", 
             "DELETE", 
             {}, 
-            { session_id: SESSION_ID } // Utilisation de SESSION_ID
+            { session_id: SESSION_ID }
         );
 
         if (!sessionDeletion.success) throw new Error("Erreur lors de la suppression de la session.");
 
-        console.log("✅ Session supprimée avec succès.");
+        logMessage('success', "✅ Session supprimée avec succès.");
 
-        const tokenDeletion = await logoutRequest(); // Attendre la réponse
+        const tokenDeletion = await logoutRequest();
 
         if (!tokenDeletion.success) throw new Error("Erreur lors de la suppression du token.");
 
-        console.log("✅ Token d'accès supprimé avec succès.");
+        logMessage('success', "✅ Token d'accès supprimé avec succès.");
 
         // Suppression des cookies
-        clearCookie("ACCOUNT_ID");
-        console.log("🗑️ Cookie supprimé : ACCOUNT_ID");
-        clearCookie("ACCESS_TOKEN");
-        console.log("🗑️ Cookie supprimé : ACCESS_TOKEN");
-        clearCookie("SESSION_ID");
-        console.log("🗑️ Cookie supprimé : SESSION_ID");
+        ["ACCOUNT_ID", "ACCESS_TOKEN", "SESSION_ID"].forEach(cookieName => {
+            clearCookie(cookieName);
+            logMessage('deletion', `🗑️ Cookie supprimé : ${cookieName}`);
+        });
     } catch (error) {
-        console.error(`🚨 ${error.message}`); // Message d'erreur en cas d'échec
+        logMessage('error', `🚨 ${error.message}`);
     } finally {
-        console.groupEnd(); // Fin du groupe de logs
+        console.groupEnd();
     }
 }
 
@@ -40,25 +38,54 @@ async function logout(event) {
         event.target.removeEventListener("click", logout);
     }
 
-    console.groupCollapsed("🔴 Tentative de déconnexion..."); // Début du groupe de logs
+    console.groupCollapsed("%c🔴 TENTATIVE DE DÉCONNEXION", "color: #FF4500; font-weight: bold;");
 
     try {
-        await logoutClear(); // Attendre la suppression des données
-        // removeElement("#btnLogout");
-        // updateUIAfterLogout();
-        console.log("🔴 Déconnexion réussie !"); // Message de débogage
+        await logoutClear();
+        logMessage('success', "🔴 Déconnexion réussie !");
     } catch (error) {
-        console.error(`🚨 ${error.message}`); // Message d'erreur
-        event.target.addEventListener("click", login);
-    } finally {
-        
-        let userInterface = document.querySelectorAll("#userInterface > *");
-
-        for (let i = 0; i < userInterface.length; i++) {
-            userInterface[i].remove();
+        logMessage('error', `🚨 ${error.message}`);
+        if (event?.target) {
+            event.target.addEventListener("click", logout);
         }
+    } finally {
+        // Suppression des éléments de l'interface utilisateur
+        const userInterface = document.querySelectorAll("#userInterface > *");
+        userInterface.forEach(el => el.remove());
 
         setuplogin();
-        console.groupEnd(); // Fin du groupe de logs=
+        console.groupEnd();
     }
 }
+
+// Appel de la fonction pour afficher la documentation
+afficherDocumentation(
+    "logout.js",
+    [
+        { emoji: "🔴", description: "Suppression des données de déconnexion", couleur: "color: #FF4500; font-weight: bold;" },
+        { emoji: "✅", description: "Session supprimée avec succès", couleur: "color: #32CD32; font-weight: bold;" },
+        { emoji: "🗑️", description: "Cookie supprimé", couleur: "color: #FF4500; font-weight: bold;" },
+        { emoji: "🚨", description: "Erreur lors de la suppression", couleur: "color: #FF4500; font-weight: bold;" }
+    ],
+    [
+        {
+            nom: "logoutClear()",
+            couleur: "color: #FF4500; font-weight: bold;",
+            descriptions: [
+                "Supprime la session utilisateur du serveur.",
+                "Supprime les cookies liés à la session et au token d'accès.",
+                "Gère les erreurs lors de la suppression des données."
+            ]
+        },
+        {
+            nom: "logout(event)",
+            couleur: "color: #FF4500; font-weight: bold;",
+            descriptions: [
+                "Gère le processus de déconnexion de l'utilisateur.",
+                "Empêche le rechargement de la page lors de la déconnexion.",
+                "Appelle logoutClear pour supprimer les données.",
+                "Affiche les messages de succès ou d'erreur selon le résultat."
+            ]
+        }
+    ]
+);
