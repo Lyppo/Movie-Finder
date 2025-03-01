@@ -1,18 +1,18 @@
-async function request(url, type, params = {}, content = {}) {
-    logMessage('group', "🟢 [REQ] Création de la requête..."); // Démarre un groupe de log
+async function request(url, type = "GET", params = {}, content = {}) {
+    logMessage('group', `Création de la requête...\n${type} → ${url}`, "REQ"); // Démarre un groupe de log
 
     // Vérifie si l'URL est correcte
     if (!url.includes("api.themoviedb.org")) {
-        logMessage('error', "❌ L'URL doit concerner api.themoviedb.org.");
-        logMessage('group', null);
+        logMessage('error', "L'URL doit concerner api.themoviedb.org.", "REQ");
+        console.groupEnd(); // Termine le groupe de log en cas d'erreur
         return null;
     }
 
     // Vérification de la méthode HTTP
     const validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
     if (!validMethods.includes(type)) {
-        logMessage('error', `❌ Méthode HTTP invalide : ${type}.`);
-        logMessage('group', null);
+        logMessage('error', `Méthode HTTP invalide : ${type}.`, "REQ");
+        console.groupEnd(); // Termine le groupe de log en cas d'erreur
         return null;
     }
 
@@ -25,8 +25,7 @@ async function request(url, type, params = {}, content = {}) {
         content.access_token = ACCESS_TOKEN; // Remplace le token par la valeur actuelle
     }
 
-    logMessage('group', `[REQUEST] ${type} → ${url}`);
-    logMessage('log', "📩 Contenu envoyé :", { ...content, access_token: '***' }); // Masque le token dans les logs
+    logMessage('log', "Contenu envoyé :", "REQ", {params: params, content: content}); // Affiche le contenu envoyé
 
     try {
         // Envoi de la requête
@@ -41,43 +40,40 @@ async function request(url, type, params = {}, content = {}) {
 
         // Analyse de la réponse
         const data = await response.json();
-        logMessage('log', "📬 Réponse reçue :", data);
+        logMessage('success', "Réponse reçue :", "REQ", data);
 
         // Gestion des erreurs de réponse
         if (!response.ok) {
+            console.groupEnd(); // Termine le groupe de log en cas d'erreur
             throw new Error(`⚠️ Erreur API : ${response.status} - ${data.status_message || 'Erreur inconnue'}`);
         }
 
-        logMessage('group', null); // Termine le groupe de log
+        console.groupEnd(); // Termine le groupe de log en cas de succès
         return data; // Retourne les données
     } catch (error) {
-        logMessage('error', `❌ Erreur : ${error.message}`); // Affiche les erreurs
-        logMessage('group', null); // Termine le groupe de log en cas d'erreur
+        logMessage('error', `Erreur : ${error.message}`, "REQ"); // Affiche les erreurs
+        console.groupEnd(); // Termine le groupe de log en cas d'erreur
         return null;
     }
 }
 
-// Appel de la fonction pour afficher la documentation
-afficherDocumentation(
-    "request.js",
-    [
-        { emoji: "🟢", description: "Création de la requête", couleur: "color: #1E90FF; font-weight: bold;" },
-        { emoji: "❌", description: "Erreur d'URL ou de requête", couleur: "color: #FF4500; font-weight: bold;" },
-        { emoji: "📩", description: "Contenu envoyé", couleur: "color: lightblue; font-weight: bold;" },
-        { emoji: "📬", description: "Réponse reçue", couleur: "color: #32CD32; font-weight: bold;" },
-        { emoji: "⚠️", description: "Erreur API", couleur: "color: orange; font-weight: bold;" }
-    ],
-    [
-        {
-            nom: "request(url, type, params = {}, content = {})",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Effectue une requête HTTP vers l'API TMDB.",
-                "Vérifie que l'URL est correcte avant d'envoyer la requête.",
-                "Gère l'ajout du token d'accès dans le contenu si présent.",
-                "Affiche les logs pour le contenu envoyé et la réponse reçue.",
-                "Retourne les données de la réponse ou null en cas d'erreur."
-            ]
-        }
-    ]
-);
+afficherDocumentation("request", [
+    {
+        nom: "request",
+        params: [
+            { forced: "url" },    // URL de l'API
+            { forced: "type" },   // Type de requête (GET, POST, PUT, DELETE)
+            "params",             // Paramètres de requête optionnels (query params)
+            "content"             // Corps de la requête (données envoyées)
+        ],
+        style: "connection",
+        descriptions: [
+            "Effectue une requête asynchrone vers l'API TMDb avec `fetch`.",
+            "Vérifie si l'URL est correcte (`api.themoviedb.org`).",
+            "Supporte les méthodes HTTP : GET, POST, PUT, DELETE.",
+            "Ajoute automatiquement l'`ACCESS_TOKEN` dans les headers.",
+            "Affiche les requêtes et réponses dans la console pour le debug.",
+            "Retourne les données de la réponse ou `null` en cas d'erreur."
+        ]
+    }
+]);

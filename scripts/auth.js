@@ -4,9 +4,9 @@ let SESSION_ID = ""; // ID de session
 
 // 🔐 Fonction d'authentification asynchrone
 async function requestAuth(url, content, type) {
-    logMessage('group', `[AUTH] ${type} → ${url}`); // Démarrer un groupe de log pour l'authentification
+    logMessage('group', `${type} → ${url}`, 'AUTH'); // Démarrer un groupe de log pour l'authentification
 
-    logMessage('log', '📤 Envoi des données :', content); // Afficher les données envoyées
+    logMessage('connection', 'Envoi des données :', 'AUTH', content); // Afficher les données envoyées
 
     try {
         const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
@@ -17,16 +17,17 @@ async function requestAuth(url, content, type) {
 
         const data = await response.json();
         
-        logMessage('log', '📩 Réponse reçue :', data); // Afficher la réponse API
+        logMessage('success', 'Réponse reçue :', 'AUTH', data); // Afficher la réponse API
 
         if (!response.ok) {
+            console.groupEnd();
             throw new Error(`🚫 Erreur HTTP : ${response.status}`);
         }
 
         console.groupEnd();
         return data;
     } catch (error) {
-        logMessage('error', '❌ Erreur :', error.message); // Afficher l'erreur
+        logMessage('error', 'Erreur :', 'AUTH', error.message); // Afficher l'erreur
         console.groupEnd();
         return null;
     }
@@ -36,13 +37,13 @@ async function requestAuth(url, content, type) {
 async function createRequestToken() {
     let redirect_to = window.location.href.replace(/(\.html|\/index)$/, "") + "/popup.html";
 
-    logMessage('group', "Création du token de requête..."); // Indiquer le début de la création du token
+    logMessage('group', "Création du token de requête...", 'AUTH'); // Indiquer le début de la création du token
     const data = await requestAuth('https://api.themoviedb.org/4/auth/request_token', { redirect_to }, 'POST');
 
     if (data?.request_token) {
-        logMessage('success', '🔑 Token généré :', { request_token: data.request_token });
+        logMessage('success', 'Token généré :', 'AUTH', { request_token: data.request_token });
     } else {
-        logMessage('warn', "⚠️ Échec de la génération du token."); // Avertir en cas d'échec
+        logMessage('warn', "Échec de la génération du token.", 'AUTH'); // Avertir en cas d'échec
     }
 
     console.groupEnd();
@@ -51,7 +52,7 @@ async function createRequestToken() {
 
 // 🔓 Création d'un token d'accès
 async function createAccessToken(tmpToken) {
-    logMessage('group', "[AUTH] Création du token d'accès..."); // Indiquer le début de la création du token d'accès
+    logMessage('group', "Création du token d'accès...", 'AUTH'); // Indiquer le début de la création du token d'accès
     const data = await requestAuth('https://api.themoviedb.org/4/auth/access_token', { request_token: tmpToken }, 'POST');
 
     if (data?.account_id && data?.access_token) {
@@ -60,9 +61,9 @@ async function createAccessToken(tmpToken) {
         setCookie("ACCOUNT_ID", ACCOUNT_ID);
         setCookie("ACCESS_TOKEN", ACCESS_TOKEN);
 
-        logMessage('success', '🆔 ID du compte et token d\'accès créés :', { ACCOUNT_ID, ACCESS_TOKEN });
+        logMessage('success', 'ID du compte et token d\'accès créés :', 'AUTH', { ACCOUNT_ID, ACCESS_TOKEN });
     } else {
-        logMessage('warn', "⚠️ Échec de la création du token d'accès."); // Avertir en cas d'échec
+        logMessage('warn', "Échec de la création du token d'accès.", 'AUTH'); // Avertir en cas d'échec
     }
 
     console.groupEnd();
@@ -70,7 +71,7 @@ async function createAccessToken(tmpToken) {
 
 // 🏁 Création d'une session
 async function createSession() {
-    logMessage('group', "Création de la session..."); // Indiquer le début de la création de la session
+    logMessage('group', "Création de la session...", 'AUTH'); // Indiquer le début de la création de la session
     const data = await requestAuth('https://api.themoviedb.org/3/authentication/session/convert/4', 
         { access_token: ACCESS_TOKEN }, 'POST');
 
@@ -78,9 +79,9 @@ async function createSession() {
         SESSION_ID = data.session_id;
         setCookie("SESSION_ID", SESSION_ID);
 
-        logMessage('success', '✅ Session créée :', { SESSION_ID });
+        logMessage('success', 'Session créée :', 'AUTH', { SESSION_ID });
     } else {
-        logMessage('warn', "⚠️ Échec de la création de la session."); // Avertir en cas d'échec
+        logMessage('warn', "Échec de la création de la session.", 'AUTH'); // Avertir en cas d'échec
     }
 
     console.groupEnd();
@@ -88,69 +89,77 @@ async function createSession() {
 
 // 🚪 Déconnexion
 async function logoutRequest() {
-    logMessage('group', "Suppression du token d'accès..."); // Indiquer le début de la suppression du token d'accès
+    logMessage('group', "Suppression du token d'accès...", 'AUTH'); // Indiquer le début de la suppression du token d'accès
     const data = await requestAuth('https://api.themoviedb.org/4/auth/access_token', { access_token: ACCESS_TOKEN }, 'DELETE');
 
     if (data?.success) {
-        logMessage('success', '✅ Token supprimé avec succès.');
+        logMessage('success', 'Token supprimé avec succès.', 'AUTH');
     } else {
-        logMessage('warn', "⚠️ Échec de la suppression du token."); // Avertir en cas d'échec
+        logMessage('warn', "Échec de la suppression du token.", 'AUTH'); // Avertir en cas d'échec
     }
 
     console.groupEnd();
     return data;
 }
 
-// Appel de la fonction pour afficher la documentation
-afficherDocumentation(
-    "auth.js",
-    [
-        { emoji: "🔐", description: "Fonction d'authentification", couleur: "color: #1E90FF; font-weight: bold;" },
-        { emoji: "🔑", description: "Création d'un token de requête", couleur: "color: #FFD700; font-weight: bold;" },
-        { emoji: "🔓", description: "Création d'un token d'accès", couleur: "color: #00BFFF; font-weight: bold;" },
-        { emoji: "🏁", description: "Création d'une session", couleur: "color: #8A2BE2; font-weight: bold;" },
-        { emoji: "🚪", description: "Déconnexion", couleur: "color: #DC143C; font-weight: bold;" }
-    ],
-    [
-        {
-            nom: "requestAuth(url, content, type)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Envoie une requête d'authentification à l'API TMDB.",
-                "Gère les erreurs et affiche les réponses dans la console."
-            ]
-        },
-        {
-            nom: "createRequestToken()",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Crée un token de requête pour l'authentification de l'utilisateur.",
-                "Redirige l'utilisateur après la génération du token."
-            ]
-        },
-        {
-            nom: "createAccessToken(tmpToken)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Échange un token de requête temporaire contre un token d'accès permanent.",
-                "Stocke l'ID du compte et le token d'accès dans des cookies."
-            ]
-        },
-        {
-            nom: "createSession()",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Crée une session pour l'utilisateur avec le token d'accès.",
-                "Stocke l'ID de session dans un cookie."
-            ]
-        },
-        {
-            nom: "logoutRequest()",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Supprime le token d'accès de l'utilisateur pour le déconnexion.",
-                "Affiche le succès ou l'échec de la déconnexion dans la console."
-            ]
-        }
-    ]
-);
+afficherDocumentation("auth", [
+    {
+        nom: "requestAuth",
+        params: [
+            { forced: "url" },    // URL de l'API
+            { forced: "content" }, // Contenu de la requête (données envoyées)
+            { forced: "type" }     // Type de requête (GET, POST, DELETE)
+        ],
+        style: "connection",
+        descriptions: [
+            "Effectue une requête API asynchrone vers The Movie Database (TMDb).",
+            "Envoie les données fournies avec le type de requête spécifié (POST, DELETE...).",
+            "Retourne les données JSON de la réponse ou `null` en cas d'échec.",
+            "Affiche les informations de connexion et la réponse dans la console."
+        ]
+    },
+    {
+        nom: "createRequestToken",
+        params: [],
+        style: "addition",
+        descriptions: [
+            "Génère un token de requête pour l'authentification avec TMDb.",
+            "Utilise `requestAuth` pour envoyer la requête de création de token.",
+            "Retourne le token de requête s'il est généré avec succès, sinon `undefined`.",
+            "Affiche les informations du token dans la console."
+        ]
+    },
+    {
+        nom: "createAccessToken",
+        params: [
+            { forced: "tmpToken" } // Token de requête temporaire
+        ],
+        style: "addition",
+        descriptions: [
+            "Crée un token d'accès à partir d'un token de requête temporaire.",
+            "Stocke l'ID du compte et le token d'accès dans des cookies.",
+            "Affiche les informations d'identification obtenues.",
+            "Utilise `setCookie` pour stocker les données."
+        ]
+    },
+    {
+        nom: "createSession",
+        params: [],
+        style: "success",
+        descriptions: [
+            "Crée une session utilisateur basée sur le token d'accès.",
+            "Stocke l'ID de session obtenu dans un cookie.",
+            "Affiche l'ID de session créé ou un avertissement en cas d'échec."
+        ]
+    },
+    {
+        nom: "logoutRequest",
+        params: [],
+        style: "deletion",
+        descriptions: [
+            "Supprime le token d'accès pour déconnecter l'utilisateur.",
+            "Envoie une requête DELETE à l'API TMDb.",
+            "Affiche un message de succès ou un avertissement en cas d'échec."
+        ]
+    }
+]);

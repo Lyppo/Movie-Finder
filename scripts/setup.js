@@ -1,5 +1,5 @@
 async function userInterface(zenith) {
-    logMessage('group', "👤 Création du profil utilisateur...");
+    logMessage('group', "Création du profil utilisateur...");
 
     let userInterface = document.createElement("div");
     userInterface.id = "userInterface";
@@ -11,22 +11,22 @@ async function userInterface(zenith) {
         setuplogin(userInterface);
     }
 
-    logMessage('group', null);
+    console.groupEnd();
 }
 
 function setuplogin(userInterface = document.getElementById("userInterface")) {
-    logMessage('group', "🟠 Configuration de la fonction de connexion"); // Début du groupe de logs
+    logMessage('change', "Configuration de la fonction de connexion"); // Début du groupe de logs
 
     let btn = document.createElement("button");
     btn.id = "btnLogin";
     btn.textContent = "Se connecter";
     btn.addEventListener("click", login);
     userInterface.appendChild(btn);
-
-    logMessage('group', null);
 }
 
 async function setuploged(userInterface = document.getElementById("userInterface")) {
+    logMessage('change', "Configuration de la fonction de contrôle utilisateur"); // Début du groupe de logs
+
     await createPDP(userInterface);
 
     let div = document.createElement("div");
@@ -39,22 +39,18 @@ async function setuploged(userInterface = document.getElementById("userInterface
 
     userInterface.appendChild(div);
 
-    logMessage('group', "🟠 Configuration de la fonction de contrôle utilisateur"); // Début du groupe de logs
-
     let btn = document.createElement("button");
     btn.id = "btnLogout";
     btn.textContent = "Se déconnecter";
     btn.addEventListener("click", logout);
     div.appendChild(btn);
-
-    logMessage('group', null);
 }
 
 function setupUI() {
-    logMessage('group', "🟠 Configuration de la page"); // Début du groupe de logs
+    logMessage('group', "Configuration de la page"); // Début du groupe de logs
 
     document.querySelectorAll(".no-js").forEach((element) => {
-        logMessage('log', "🧹 Suppression de l'élément <noscript>...");
+        logMessage('deletion', "Suppression des elements no-js");
         element.remove();
     });
 
@@ -99,7 +95,7 @@ function setupUI() {
     button.appendChild(b1);
     button.appendChild(b2);
 
-    logMessage('group', null);
+    console.groupEnd();
 }
 
 async function loadImage(element, imagePath) {
@@ -117,12 +113,12 @@ async function loadImage(element, imagePath) {
     ];
 
     // Afficher la largeur de l'élément
-    logMessage('log', "📏 Élément largeur:", element.clientWidth);
+    logMessage('log', "Élément largeur: " + element.clientWidth);
 
     // Fonction pour calculer le flou
     function calculateBlur(elementWidth, loadedWidth) {
         const blur = Math.max(15 - (loadedWidth / 20), 0); // Ajuster selon besoin
-        logMessage('log', `🌫️ Calcul du flou: ${blur} (Élément Largeur: ${elementWidth}, Chargé Largeur: ${loadedWidth})`);
+        logMessage('loading', `Calcul du flou: ${blur} (Élément Largeur: ${elementWidth}, Chargé Largeur: ${loadedWidth})`);
         return blur;
     }
 
@@ -137,14 +133,14 @@ async function loadImage(element, imagePath) {
         // Si l'indice est inférieur à lastLoadedIndex, ne rien faire
         if (lastLoadedIndex >= index) return;
 
-        logMessage('log', `🔄 Chargement de l'image à l'indice ${index}: ${res.size}`);
+        logMessage('loading', `Chargement de l'image à l'indice ${index}: ${res.size}`);
         
         let img = new Image();
         img.src = `https://image.tmdb.org/t/p/${res.size}${imagePath}`;
 
         // Lorsque l'image est chargée
         img.onload = () => {
-            logMessage('log', `✅ Image chargée: ${img.src}`);
+            logMessage('success', `Image chargée: ${img.src}`);
             lastLoadedIndex = index; // Mettre à jour l'indice
             element.src = img.src; // Changer le src de l'élément
             element.style.filter = `blur(${calculateBlur(element.clientWidth, res.width)}px)`; // Appliquer le flou
@@ -169,7 +165,7 @@ async function loadImage(element, imagePath) {
 
 // Exemple d'utilisation
 async function createPDP(userInterface) {
-    logMessage('group', "🔍 Chargement des données utilisateur..."); // Message de débogage
+    logMessage('group', "Chargement des données utilisateur..."); // Message de débogage
     let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
     
     let pdp = document.createElement("img");
@@ -180,12 +176,12 @@ async function createPDP(userInterface) {
     pdp.style.objectPosition = "center"; // Centre l'image si besoin
     pdp.style.borderRadius = "50%"; // Effet rond
 
-    logMessage('log', "🔍 Chargement de l'image pour l'utilisateur...");
+    logMessage('loading', "Chargement de l'image pour l'utilisateur...");
     userInterface.appendChild(pdp);
     loadImage(pdp, data.avatar.tmdb.avatar_path);
     
     pdp.addEventListener("mouseenter", showOverlay); // Quand on entre dans pdp
-    logMessage('group', null);
+    console.groupEnd();
 }
 
 function showOverlay(event) {
@@ -203,90 +199,124 @@ function DiscareOverlay(event) {
 }
 
 async function test() {
-    logMessage('log', "🔍 Test en cours...");
+    logMessage('loading', "Test en cours...");
 }
 
 function setupTest() {
-    logMessage('group', "🔧 Configuration des tests..."); // Message de débogage
+    logMessage('group', "Configuration des tests..."); // Message de débogage
     creerElementsDepuisHTML(`<button style="top: 0px; left: 0px;" id="test">Test</button>`, "#zenith")
         .addEventListener("click", test);
-    logMessage('log', '🔧 Bouton de test créé.'); // Message de débogage
-    logMessage('group', null);
+    logMessage('success', 'Bouton de test créé.'); // Message de débogage
+    console.groupEnd();
 }
 
-// Appel de la fonction pour afficher la documentation
-afficherDocumentation(
-    "setup.js",
-    [
-        { emoji: "👤", description: "Création du profil utilisateur", couleur: "color: #1E90FF; font-weight: bold;" },
-        { emoji: "🟠", description: "Configuration de la fonction de connexion", couleur: "color: #FF8C00; font-weight: bold;" },
-        { emoji: "🔍", description: "Chargement des données utilisateur", couleur: "color: #32CD32; font-weight: bold;" },
-        { emoji: "✅", description: "Image chargée avec succès", couleur: "color: #32CD32; font-weight: bold;" },
-        { emoji: "❌", description: "Erreur d'image ou de données", couleur: "color: #FF4500; font-weight: bold;" }
-    ],
-    [
-        {
-            nom: "userInterface(zenith)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Crée et configure l'interface utilisateur.",
-                "Vérifie si l'utilisateur est connecté et configure l'interface en conséquence."
-            ]
-        },
-        {
-            nom: "setuplogin(userInterface)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Configure l'interface pour la connexion de l'utilisateur.",
-                "Ajoute un bouton de connexion et définit un écouteur d'événements."
-            ]
-        },
-        {
-            nom: "setuploged(userInterface)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Configure l'interface lorsque l'utilisateur est connecté.",
-                "Ajoute un bouton de déconnexion et affiche les informations utilisateur."
-            ]
-        },
-        {
-            nom: "setupUI()",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Configure la page principale de l'application.",
-                "Supprime les éléments inutiles et initialise les éléments de l'interface."
-            ]
-        },
-        {
-            nom: "loadImage(element, imagePath)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Charge une image à partir d'un chemin donné et ajuste son flou selon la largeur de l'élément.",
-                "Gère plusieurs résolutions d'image."
-            ]
-        },
-        {
-            nom: "createPDP(userInterface)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Crée le profil utilisateur avec l'image et les données de l'utilisateur.",
-                "Ajoute l'image à l'interface et configure les événements associés."
-            ]
-        },
-        {
-            nom: "test()",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Fonction de test pour vérifier le fonctionnement des éléments."
-            ]
-        },
-        {
-            nom: "setupTest()",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Configure un bouton de test dans l'interface.",
-                "Ajoute un écouteur d'événements pour exécuter la fonction de test."
-            ]
-        }
-    ]
-);
+afficherDocumentation("setup", [
+    {
+        nom: "userInterface",
+        params: ["zenith"],
+        style: "addition",
+        descriptions: [
+            "Crée et affiche l'interface utilisateur en fonction de l'état de connexion.",
+            "1. Vérifie si l'utilisateur est connecté via `loged()`.",
+            "2. Charge `setuploged()` si connecté, sinon `setuplogin()`.",
+            "3. Ajoute `userInterface` à `zenith`."
+        ]
+    },
+    {
+        nom: "setuplogin",
+        params: ["userInterface"],
+        style: "addition",
+        descriptions: [
+            "Ajoute un bouton 'Se connecter' pour les utilisateurs non connectés.",
+            "1. Crée un bouton avec l'ID `btnLogin`.",
+            "2. Associe l'événement `click` pour appeler `login`.",
+            "3. Ajoute le bouton à `userInterface`."
+        ]
+    },
+    {
+        nom: "setuploged",
+        params: ["userInterface"],
+        style: "addition",
+        descriptions: [
+            "Configure l'interface utilisateur pour un utilisateur connecté.",
+            "1. Charge l'image de profil via `createPDP()`.",
+            "2. Ajoute un conteneur `list` contenant le bouton `Se déconnecter`.",
+            "3. Associe `logout` au bouton de déconnexion."
+        ]
+    },
+    {
+        nom: "setupUI",
+        params: [],
+        style: "addition",
+        descriptions: [
+            "Construit l'interface graphique de la page.",
+            "1. Supprime les éléments `no-js`.",
+            "2. Crée et ajoute `zenith`, `userInterface` et `app`.",
+            "3. Initialise une image par défaut et les boutons de navigation.",
+            "4. Lance `userInterface(zenith)` pour gérer l'authentification."
+        ]
+    },
+    {
+        nom: "loadImage",
+        params: ["element", "imagePath"],
+        style: "loading",
+        descriptions: [
+            "Charge une image en plusieurs résolutions pour un affichage progressif.",
+            "1. Définit une liste de résolutions de TMDb.",
+            "2. Sélectionne la meilleure résolution pour l'élément.",
+            "3. Applique un effet de flou dynamique en fonction de la résolution."
+        ]
+    },
+    {
+        nom: "createPDP",
+        params: ["userInterface"],
+        style: "change",
+        descriptions: [
+            "Affiche l'image de profil de l'utilisateur connecté.",
+            "1. Récupère les données utilisateur via l'API TMDb.",
+            "2. Crée et configure une image circulaire `pdp`.",
+            "3. Charge l'image avec `loadImage(pdp, data.avatar.tmdb.avatar_path)`,",
+            "4. Active les interactions d'affichage de l'overlay (déconnexion)."
+        ]
+    },
+    {
+        nom: "showOverlay",
+        params: ["event"],
+        style: "addition",
+        descriptions: [
+            "Affiche la liste d'options utilisateur au survol de l'image de profil.",
+            "1. Supprime l'événement `mouseenter` de `pdp`.",
+            "2. Affiche `#list`.",
+            "3. Ajoute `mouseleave` à son parent pour masquer l'overlay."
+        ]
+    },
+    {
+        nom: "DiscareOverlay",
+        params: ["event"],
+        style: "deletion",
+        descriptions: [
+            "Masque l'overlay utilisateur lorsque la souris quitte la zone.",
+            "1. Supprime l'événement `mouseleave`.",
+            "2. Réactive `mouseenter` sur `pdp`.",
+            "3. Cache `#list`."
+        ]
+    },
+    {
+        nom: "test",
+        params: [],
+        style: "change",
+        descriptions: [
+            "Affiche un log indiquant un test en cours."
+        ]
+    },
+    {
+        nom: "setupTest",
+        params: [],
+        style: "change",
+        descriptions: [
+            "Ajoute un bouton de test à l'interface.",
+            "1. Insère un bouton `Test` dans `#zenith`.",
+            "2. Associe l'événement `click` à `test()`."
+        ]
+    }
+]);

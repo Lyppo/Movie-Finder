@@ -1,11 +1,12 @@
-let cookies = {}; // 🍪 Stockage des cookies
+// 🍪 Stockage des cookies
+let cookies = {}; 
 
 // 🔹 Fonction pour récupérer les cookies
 function getCookies() {
-    logMessage('group', "Chargement des cookies..."); // Démarrer un groupe de log pour le chargement des cookies
+    logMessage('group', "Chargement des cookies..."); // Démarre un groupe de log pour le chargement des cookies
 
     if (!document.cookie) {
-        logMessage('warn', "Aucun cookie trouvé."); // Avertir si aucun cookie n'est trouvé
+        logMessage('warn', "Aucun cookie trouvé."); // Avertit si aucun cookie n'est trouvé
         console.groupEnd();
         return;
     }
@@ -16,89 +17,85 @@ function getCookies() {
     for (let i = 0; i < cookiesArray.length; i++) {
         let [name, value] = cookiesArray[i].split('='); // On sépare le nom et la valeur
         if (name) {
-            cookies[name] = decodeURIComponent(value);
+            cookies[name] = decodeURIComponent(value); // Ajoute le cookie dans l'objet
         }
     }
 
-    logMessage('log', "Cookies chargés :", cookies); // Afficher les cookies sous forme de tableau
-    logMessage('log', `Total cookies chargés : ${Object.keys(cookies).length}`); // Nombre total de cookies
+    logMessage('success', "Cookies chargés :", null, cookies); // Affiche les cookies sous forme de tableau
+    logMessage('cookies', `Total cookies chargés : ${Object.keys(cookies).length}`); // Affiche le nombre total de cookies
     console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
 }
 
 // 🔹 Ajouter ou mettre à jour un cookie
 function setCookie(name, value) {
-    logMessage('group', "Ajout d'un cookie..."); // Démarrer un groupe de log pour l'ajout de cookie
+    logMessage('group', "Ajout d'un cookie..."); // Démarre un groupe de log pour l'ajout de cookie
 
     if (!name || !value) {
-        logMessage('warn', "Impossible d'ajouter un cookie : Nom et valeur requis !"); // Avertir si le nom ou la valeur est manquant
+        logMessage('warn', "Impossible d'ajouter un cookie : Nom et valeur requis !"); // Avertit si le nom ou la valeur est manquant
         console.groupEnd();
         return;
     }
 
     document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${2592000}; path=/`; // Durée de vie : 30 jours
-    cookies[name] = value;
+    cookies[name] = value; // Met à jour l'objet cookies
 
-    logMessage('log', "Cookie ajouté :", { [name]: value }); // Afficher le cookie ajouté sous forme de tableau
-    logMessage('log', `Cookie : ${name} = ${value}`); // Afficher le nom et la valeur du cookie
+    logMessage('addition', "Cookie ajouté :", null, { [name]: value }); // Affiche le cookie ajouté sous forme de tableau
+    logMessage('cookies', `Cookie : ${name} = ${value}`); // Affiche le nom et la valeur du cookie
     console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
 }
 
 // 🔹 Supprimer un cookie spécifique
 function clearCookie(name) {
-    logMessage('group', "Suppression d'un cookie..."); // Démarrer un groupe de log pour la suppression de cookie
+    logMessage('group', "Suppression d'un cookie..."); // Démarre un groupe de log pour la suppression de cookie
 
     if (!cookies[name]) {
-        logMessage('warn', `Le cookie "${name}" n'existe pas.`); // Avertir si le cookie n'existe pas
+        logMessage('warn', `Le cookie "${name}" n'existe pas.`); // Avertit si le cookie n'existe pas
         console.groupEnd();
         return;
     }
 
-    document.cookie = `${name}=; max-age=0; path=/`;
-    delete cookies[name];
+    document.cookie = `${name}=; max-age=0; path=/`; // Supprime le cookie
+    delete cookies[name]; // Supprime le cookie de l'objet
 
-    logMessage('log', "Cookies après suppression :", cookies); // Afficher les cookies restants après suppression
-    logMessage('log', `Cookie supprimé : ${name}`); // Afficher le nom du cookie supprimé
+    logMessage('cookies', "Cookies après suppression :", null, cookies); // Affiche les cookies restants après suppression
+    logMessage('deletion', `Cookie supprimé : ${name}`); // Affiche le nom du cookie supprimé
     console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
 }
 
-// Appel de la fonction pour afficher la documentation
-afficherDocumentation(
-    "cookies.js",
-    [
-        { emoji: "🍪", description: "Stockage des cookies", couleur: "color: #32CD32; font-weight: bold;" },
-        { emoji: "📥", description: "Chargement des cookies", couleur: "color: #1E90FF; font-weight: bold;" },
-        { emoji: "📤", description: "Ajout d'un cookie", couleur: "color: #FFD700; font-weight: bold;" },
-        { emoji: "🗑️", description: "Suppression d'un cookie", couleur: "color: #FF4500; font-weight: bold;" },
-        { emoji: "⚠️", description: "Avertissement", couleur: "color: orange; font-weight: bold;" },
-        { emoji: "📊", description: "Affichage tableau", couleur: "color: lightblue; font-weight: bold;" }
-    ],
-    [
-        {
-            nom: "📥 getCookies()",
-            couleur: "color: #1E90FF; font-weight: bold;",
-            descriptions: [
-                "Récupère tous les cookies stockés dans le navigateur.",
-                "Stocke les cookies dans un objet JavaScript.",
-                "Affiche les cookies sous forme de tableau dans la console."
-            ]
-        },
-        {
-            nom: "📤 setCookie(name, value)",
-            couleur: "color: #FFD700; font-weight: bold;",
-            descriptions: [
-                "Ajoute un cookie ou met à jour sa valeur.",
-                "Le cookie est stocké pour une durée de 30 jours.",
-                "Affiche le cookie ajouté sous forme de tableau."
-            ]
-        },
-        {
-            nom: "🗑️ clearCookie(name)",
-            couleur: "color: #FF4500; font-weight: bold;",
-            descriptions: [
-                "Supprime un cookie spécifique en le mettant à expiration.",
-                "Met à jour la liste des cookies après suppression.",
-                "Affiche un message si le cookie n'existe pas."
-            ]
-        }
-    ]
-);
+afficherDocumentation("cookies", [
+    {
+        nom: "getCookies",
+        params: [],
+        style: "log",
+        descriptions: [
+            "Récupère tous les cookies stockés dans le navigateur.",
+            "Affiche les cookies sous forme de tableau dans la console.",
+            "Si aucun cookie n'est trouvé, un avertissement est affiché."
+        ]
+    },
+    {
+        nom: "setCookie",
+        params: [
+            { forced: "name" }, // Paramètre obligatoire : nom du cookie
+            { forced: "value" } // Paramètre obligatoire : valeur du cookie
+        ],
+        style: "addition",
+        descriptions: [
+            "Ajoute un cookie avec un nom et une valeur spécifiés.",
+            "Le cookie a une durée de vie de 30 jours.",
+            "Affiche un message de confirmation et le cookie ajouté."
+        ]
+    },
+    {
+        nom: "clearCookie",
+        params: [
+            { forced: "name" } // Paramètre obligatoire : nom du cookie à supprimer
+        ],
+        style: "deletion",
+        descriptions: [
+            "Supprime un cookie spécifique en utilisant son nom.",
+            "Si le cookie n'existe pas, un avertissement est affiché.",
+            "Affiche les cookies restants après la suppression."
+        ]
+    }
+]);
