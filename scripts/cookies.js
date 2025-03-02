@@ -1,13 +1,17 @@
 // 🍪 Stockage des cookies
-let cookies = {}; 
+let cookies = {};
+
+let ACCOUNT_ID = ""; // ID du compte
+let ACCESS_TOKEN = ""; // Token d'accès
+let SESSION_ID = ""; // ID de session
 
 // 🔹 Fonction pour récupérer les cookies
-function getCookies() {
-    logMessage('group', "Chargement des cookies..."); // Démarre un groupe de log pour le chargement des cookies
+async function getCookies() {
+    logMessage('cookies', "Chargement des cookies...", "cookies", null, true); // Démarre un groupe de log pour le chargement des cookies
 
     if (!document.cookie) {
-        logMessage('warn', "Aucun cookie trouvé."); // Avertit si aucun cookie n'est trouvé
-        console.groupEnd();
+        logMessage('warn', "Aucun cookie trouvé.", "cookies"); // Avertit si aucun cookie n'est trouvé
+        logMessage('end');
         return;
     }
 
@@ -21,18 +25,28 @@ function getCookies() {
         }
     }
 
-    logMessage('success', "Cookies chargés :", null, cookies); // Affiche les cookies sous forme de tableau
-    logMessage('cookies', `Total cookies chargés : ${Object.keys(cookies).length}`); // Affiche le nombre total de cookies
-    console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
+    logMessage('success', "Cookies chargés :", "cookies", cookies); // Affiche les cookies sous forme de tableau
+    logMessage('cookies', `Total cookies chargés : ${Object.keys(cookies).length}`, "cookies"); // Affiche le nombre total de cookies
+    logMessage('end');
 }
 
+async function load() {
+    logMessage('loading', "chargement des cookies...", 'cookies');
+    await getCookies();
+    ACCESS_TOKEN = cookies["ACCESS_TOKEN"];
+    ACCOUNT_ID = cookies["ACCOUNT_ID"];
+    SESSION_ID = cookies["SESSION_ID"];
+}
+
+load(); // Charge les cookies
+
 // 🔹 Ajouter ou mettre à jour un cookie
-function setCookie(name, value) {
+async function setCookie(name, value) {
     logMessage('group', "Ajout d'un cookie..."); // Démarre un groupe de log pour l'ajout de cookie
 
     if (!name || !value) {
         logMessage('warn', "Impossible d'ajouter un cookie : Nom et valeur requis !"); // Avertit si le nom ou la valeur est manquant
-        console.groupEnd();
+        logMessage('end');
         return;
     }
 
@@ -41,16 +55,16 @@ function setCookie(name, value) {
 
     logMessage('addition', "Cookie ajouté :", null, { [name]: value }); // Affiche le cookie ajouté sous forme de tableau
     logMessage('cookies', `Cookie : ${name} = ${value}`); // Affiche le nom et la valeur du cookie
-    console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
+    logMessage('end'); // Assurez-vous que le groupe est toujours fermé
 }
 
 // 🔹 Supprimer un cookie spécifique
-function clearCookie(name) {
+async function clearCookie(name) {
     logMessage('group', "Suppression d'un cookie..."); // Démarre un groupe de log pour la suppression de cookie
 
     if (!cookies[name]) {
         logMessage('warn', `Le cookie "${name}" n'existe pas.`); // Avertit si le cookie n'existe pas
-        console.groupEnd();
+        logMessage('end');
         return;
     }
 
@@ -59,7 +73,7 @@ function clearCookie(name) {
 
     logMessage('cookies', "Cookies après suppression :", null, cookies); // Affiche les cookies restants après suppression
     logMessage('deletion', `Cookie supprimé : ${name}`); // Affiche le nom du cookie supprimé
-    console.groupEnd(); // Assurez-vous que le groupe est toujours fermé
+    logMessage('end'); // Assurez-vous que le groupe est toujours fermé
 }
 
 afficherDocumentation("cookies", [

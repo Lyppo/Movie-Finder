@@ -1,77 +1,91 @@
-const debug = true;
+const debug = false;
 const doc = false;
+const groupe = false;
 
 // Constantes pour les emojis
 const EMOJIS = {
     log: "📝",          // Journalisation
     warn: "⚠️",         // Avertissement
     error: "🔥",        // Erreur critique
+    info: "ℹ️",           // Information générale
     group: "📂",        // Groupe ou catégorie
+    end: "🔚",          // Fin de la journalisation
     success: "✅",      // Succès
-    change: "🔄",       // Changement / Mise à jour
     addition: "➕",     // Ajout
+    change: "🔄",       // Changement / Mise à jour
     deletion: "❌",     // Suppression
     connection: "🔌",   // Connexion
     loading: "🔍",      // Chargement
     cookies: "🍪",      // Cookies (inchangé)
-    info: "ℹ️"         // Information générale
+    creation: "🛠️",     // Création
 };
 
 // Constantes pour les styles
 const STYLES = {
-    log: "color: #3498db; font-weight: bold;",          // Bleu vif pour la journalisation
-    warn: "color: #f39c12; font-weight: bold;",         // Orange pour les avertissements
-    error: "color: #e74c3c; font-weight: bold;",        // Rouge vif pour les erreurs
-    group: "color: #9b59b6; font-weight: bold;",        // Violet pour les groupes
-    success: "color: #2ecc71; font-weight: bold;",      // Vert vif pour le succès
-    change: "color: #16a085; font-weight: bold;",       // Vert-bleu pour les changements
-    addition: "color: #f1c40f; font-weight: bold;",     // Jaune pour l'ajout
-    deletion: "color: #c0392b; font-weight: bold;",     // Rouge foncé pour la suppression
-    connection: "color: #d35400; font-weight: bold;",   // Orange foncé pour la connexion
-    loading: "color: #7f8c8d; font-weight: bold;",      // Gris pour le chargement
-    cookies: "color: #d4a017; font-weight: bold;",      // Marron doré pour les cookies
-    info: "color: #1E90FF; font-weight: bold;"          // Bleu pour l'information
+    log: "color: #3498db;",          // Bleu vif pour la journalisation
+    warn: "color: #f39c12;",         // Orange pour les avertissements
+    error: "color: #e74c3c;",        // Rouge vif pour les erreurs
+    group: "color: #9b59b6;",        // Violet pour les groupes
+    success: "color: #2ecc71;",      // Vert vif pour le succès
+    change: "color: #16a085;",       // Vert-bleu pour les changements
+    addition: "color: #f1c40f;",     // Jaune pour l'ajout
+    deletion: "color: #c0392b;",     // Rouge foncé pour la suppression
+    connection: "color: #d35400;",   // Orange foncé pour la connexion
+    loading: "color: #7f8c8d;",      // Gris pour le chargement
+    cookies: "color: #d4a017;",      // Marron doré pour les cookies
+    info: "color: #1E90FF;",         // Bleu pour l'information
+    creation: "color: #884422;"     // Bleu foncé pour la création
 };
 
 // Constantes pour les tailles de police
 const FONT_SIZES = {
-    log: "font-size: 10px;",          // Taille standard pour la journalisation
-    warn: "font-size: 12px;",         // Légèrement plus grand pour attirer l'attention
-    error: "font-size: 14px;",        // Plus grand pour les erreurs critiques
-    group: "font-size: 14px;",        // Importante pour distinguer les groupes
-    success: "font-size: 10px;",      // Standard, pas besoin d'attirer l'attention excessive
-    change: "font-size: 10px;",       // Standard pour les modifications
-    addition: "font-size: 10px;",     // Standard pour les ajouts
-    deletion: "font-size: 12px;",     // Légèrement plus grand pour les suppressions
-    connection: "font-size: 10px;",   // Standard pour les connexions
-    loading: "font-size: 10px;",      // Standard pour les chargements
-    cookies: "font-size: 10px;",      // Standard pour les cookies
-    info: "font-size: 10px;"          // Standard pour l'information
+    log: "font-size: 1em;",            // Standard pour la journalisation
+    warn: "font-size: 1.1em;",         // Légèrement plus grand pour attirer l'attention
+    error: "font-size: 1.2em;",        // Plus grand pour les erreurs critiques
+    group: "font-size: 1.1em;",        // Importante pour distinguer les groupes
+    loading: "font-size: 0.95em;",     // Standard pour les chargements
+    info: "font-size: 0.9em;"          // Standard pour l'information
 };
 
-function logMessage(type = 'log', message = "exemple", name = null, data = null) {
+async function logMessage(type = 'log', message = "exemple", name = null, data = null, group = false) {
 
-    if (!debug && (type !== 'warn' && type !== 'error' && type !== 'group')) return; // Ne pas afficher les logs en mode non-debug
+    if (!debug && (type !== 'warn' && type !== 'error')) return; // Ne pas afficher les logs en mode non-debug
 
-    let args = "";
-    let msg = "%c";
-
-    // Vérification en une seule étape pour éviter plusieurs accès
-    const style = STYLES[type] || "";
-    const fontSize = FONT_SIZES[type] || "";
-    const emoji = EMOJIS[type] || "";
-
-    if (style || fontSize) {
-        args += style + fontSize;
+    if (type === 'end') {
+        if (!groupe)console.groupEnd();
+        return;
     }
 
-    if (emoji) msg += emoji + " ";
+    let args = "";
+    let msg = "";
+
+    let fontSize;
+    
+    if (group) {
+        fontSize = FONT_SIZES['group'];
+    }
+    else {
+        fontSize = FONT_SIZES[type] || FONT_SIZES['log'];
+    }
+    const style = STYLES[type] || STYLES['log'];
+    const emoji = EMOJIS[type] || EMOJIS['log'];
+
+    args += style + fontSize + "font-weight: bold;";
+
+    msg += emoji + " ";
     if (name) msg += `[${name.toUpperCase()}] `;
-    msg += message;
+    msg +=message;
+
+    if (!groupe && type === 'group') type = 'log';
 
     if (type === 'group') {
+        msg = "%c" + msg;
+        console.groupCollapsed(msg, args);
+    } else if (groupe && group) {
+        msg = "%c" + EMOJIS['group'] + " → " + msg;
         console.groupCollapsed(msg, args);
     } else {
+        msg = "%c" + msg;
         console[type] ? console[type](msg, args) : console.log(msg, args);
     }
 
@@ -79,7 +93,7 @@ function logMessage(type = 'log', message = "exemple", name = null, data = null)
     if (data && typeof data === "object") console.table(data);
 }
 
-function afficherDocumentation(titre = "Unnamed", fonctions = []) {
+async function afficherDocumentation(titre = "Unnamed", fonctions = []) {
 
     if (!doc) return; // Ne pas afficher la documentation en mode non-doc
 

@@ -1,24 +1,17 @@
-function load() {
-    logMessage('loading', "chargement des cookies...");
-    ACCESS_TOKEN = cookies["ACCESS_TOKEN"];
-    ACCOUNT_ID = cookies["ACCOUNT_ID"];
-    SESSION_ID = cookies["SESSION_ID"];
-}
-
 async function loged() {
     if (!ACCESS_TOKEN) {
         return false;
     } else {
-        logMessage('group', "Vérification de l'authentification...");
+        logMessage('connection', "Vérification de l'authentification...", 'login', null, true);
 
         try {
             const data = await request("https://api.themoviedb.org/3/authentication");
-            logMessage('success', "Résultat :", null, data);
-            console.groupEnd(); 
+            logMessage('success', "Résultat :", 'login', data);
+            logMessage('end');
             return data.success;
         } catch (error) {
-            logMessage('error', "Erreur lors de la vérification de l'authentification :", null, error);
-            console.groupEnd();
+            logMessage('error', "Erreur lors de la vérification de l'authentification :", 'login', error);
+            logMessage('end');
             return false;
         }
     }
@@ -31,7 +24,7 @@ async function login(event) {
         event.target.removeEventListener("click", login);
     }
 
-    logMessage('group', "Tentative de connexion...");
+    logMessage('connection', "Tentative de connexion...", 'login', null, true);
 
     const tmpToken = await createRequestToken();
     let authenticated = false;
@@ -40,13 +33,13 @@ async function login(event) {
     while (!authenticated && attempts < 3) {
         authenticated = await ouvrirPopupLogin(tmpToken);
         if (!authenticated) {
-            logMessage('warn', `Tentative d'authentification échouée (${attempts + 1}/3)`);
+            logMessage('warn', `Tentative d'authentification échouée (${attempts + 1}/3)`, 'login');
             attempts++;
         }
     }
 
     if (!authenticated) {
-        logMessage('error', "Échec de l'authentification après 3 tentatives.");
+        logMessage('error', "Échec de l'authentification après 3 tentatives.", 'login');
         console.groupEnd();
         event.target.addEventListener("click", login);
         return;
@@ -56,18 +49,18 @@ async function login(event) {
         await createAccessToken(tmpToken);
         await createSession();
 
-        let userInterface = document.querySelectorAll("#userInterface > *");
+        let sonOfUserInterface = document.querySelectorAll("#userInterface > *");
 
         // Suppression des éléments de l'interface utilisateur
-        userInterface.forEach(el => el.remove());
+        sonOfUserInterface.forEach(el => el.remove());
 
-        setuploged();
-        logMessage('success', "Connexion réussie !");
+        setuploged(document.getElementById("userInterface"));
+        logMessage('success', "Connexion réussie !", 'login');
     } catch (error) {
-        logMessage('error', "Erreur lors de la création du token ou de la session :", null, error);
+        logMessage('error', "Erreur lors de la création du token ou de la session :", 'login', error);
     }
 
-    console.groupEnd();
+    logMessage('end');
 }
 
 afficherDocumentation("login", [

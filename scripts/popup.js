@@ -1,9 +1,9 @@
 function ouvrirPopupLogin(requestToken) {
-    logMessage('group', "Ouverture de la popup de connexion...", "POPUP"); // Démarre le groupe de logs
+    logMessage('connecting', "Ouverture de la popup de connexion...", "POPUP", null, true); // Démarre le groupe de logs
     return new Promise((resolve) => {
         if (!requestToken) {
             logMessage('error', "Erreur : request_token manquant !", "POPUP");
-            console.groupEnd(); // Ferme le groupe de logs
+            logMessage('end');
             return resolve(false);
         }
 
@@ -21,7 +21,7 @@ function ouvrirPopupLogin(requestToken) {
 
         if (!popup) {
             logMessage('error', "Impossible d'ouvrir la popup (bloquée par le navigateur ?)", "POPUP");
-            console.groupEnd();
+            logMessage('end');
             return resolve(false);
         }
         logMessage('success', "Popup ouverte avec succès !", "POPUP");
@@ -29,14 +29,14 @@ function ouvrirPopupLogin(requestToken) {
         const messageListener = (event) => {
             if (event.origin !== window.location.origin) {
                 logMessage('error', "Origine non autorisée !", "POPUP");
-                console.groupEnd();
+                logMessage('end');
                 return resolve(false);
             }
 
             if (event.data === "authenticated") {
                 logMessage('success', "Utilisateur authentifié !", "POPUP");
                 window.removeEventListener("message", messageListener);
-                console.groupEnd();
+                logMessage('end');
                 return resolve(true);
             } else {
                 logMessage('log', `Message reçu de la popup : ${event.data}`, "POPUP");
@@ -54,7 +54,7 @@ function ouvrirPopupLogin(requestToken) {
             }
         }, 30000); // 30 secondes
 
-        console.groupEnd(); // Ferme le groupe de logs
+        logMessage('end'); // Ferme le groupe de logs
     });
 }
 

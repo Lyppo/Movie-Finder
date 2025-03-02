@@ -1,5 +1,5 @@
 async function logoutClear() {
-    logMessage('group', "SUPPRESSION DES DONNÉES DE DÉCONNEXION");
+    logMessage('deletion', "SUPPRESSION DES DONNÉES DE DÉCONNEXION", "LOGOUT CLEAR", null, true);
 
     try {
         const sessionDeletion = await request(
@@ -14,7 +14,7 @@ async function logoutClear() {
             throw new Error("Erreur lors de la suppression de la session.");
         }
 
-        logMessage('deletion', "Session supprimée avec succès.");
+        logMessage('success', "Session supprimée avec succès.", "LOGOUT CLEAR");
 
         const tokenDeletion = await logoutRequest();
 
@@ -23,17 +23,17 @@ async function logoutClear() {
             throw new Error("Erreur lors de la suppression du token.");
         }
 
-        logMessage('deletion', "Token d'accès supprimé avec succès.");
+        logMessage('success', "Token d'accès supprimé avec succès.", "LOGOUT CLEAR");
 
         // Suppression des cookies
         ["ACCOUNT_ID", "ACCESS_TOKEN", "SESSION_ID"].forEach(cookieName => {
             clearCookie(cookieName);
-            logMessage('deletion', `Cookie supprimé : ${cookieName}`);
+            logMessage('deletion', `Cookie supprimé : ${cookieName}`, "LOGOUT CLEAR");
         });
     } catch (error) {
-        logMessage('error', `${error.message}`);
+        logMessage('error', `${error.message}`, "LOGOUT CLEAR");
     } finally {
-        console.groupEnd();
+        logMessage('end');
     }
 }
 
@@ -44,23 +44,25 @@ async function logout(event) {
         event.target.removeEventListener("click", logout);
     }
 
-    logMessage('group', "TENTATIVE DE DÉCONNEXION", "LOGOUT");
+    document.getElementById("userInterface").removeEventListener("mouseleave", DiscareOverlay);
+
+    logMessage('deletion', "TENTATIVE DE DÉCONNEXION", "LOGOUT", null, true);
 
     try {
         await logoutClear();
-        logMessage('success', "Déconnexion réussie !");
+        logMessage('success', "Déconnexion réussie !", "LOGOUT");
     } catch (error) {
-        logMessage('error', `${error.message}`);
+        logMessage('error', `${error.message}`, "LOGOUT");
         if (event?.target) {
             event.target.addEventListener("click", logout);
         }
     } finally {
         // Suppression des éléments de l'interface utilisateur
-        const userInterface = document.querySelectorAll("#userInterface > *");
-        userInterface.forEach(el => el.remove());
+        const sonOfUserInterface = document.querySelectorAll("#userInterface > *");
+        sonOfUserInterface.forEach(el => el.remove());
 
-        setuplogin();
-        console.groupEnd();
+        setuplogin(document.getElementById("userInterface"));
+        logMessage('end');
     }
 }
 

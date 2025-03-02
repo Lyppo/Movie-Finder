@@ -1,9 +1,16 @@
-async function userInterface(zenith) {
-    logMessage('group', "Création du profil utilisateur...");
+async function zenithInterface(zenith) {
+    logMessage('creation', "Création du profil utilisateur...", 'zenith', null, true);
+
+    setupTest(zenith);
 
     let userInterface = document.createElement("div");
     userInterface.id = "userInterface";
     zenith.appendChild(userInterface);
+
+    logMessage('creation', "interface utilisateur créée.", 'zenith');
+
+    await attendreFonction("loged");
+    await attendreFonction("request");
 
     if (await loged()) {
         setuploged(userInterface);
@@ -11,10 +18,44 @@ async function userInterface(zenith) {
         setuplogin(userInterface);
     }
 
-    console.groupEnd();
+    let poster = document.createElement("img");
+    poster.id = "poster";
+    poster.src = "Images/Default.png";
+    poster.alt = "Default Image";
+    
+    zenith.appendChild(poster);
+
+    logMessage('end');
 }
 
-function setuplogin(userInterface = document.getElementById("userInterface")) {
+async function appInterface(app) {
+
+    let containerImg = document.createElement("div");
+    containerImg.id = "container-img";
+
+    let title = document.createElement("h2");
+    title.textContent = "Default Movie";
+
+    app.appendChild(containerImg);
+    app.appendChild(title);
+
+    let button = document.createElement("div");
+    button.id = "buttons";
+    app.appendChild(button);
+
+    let b1 = document.createElement("button");
+    b1.id = "like";
+    b1.textContent = "❤️ Ajouter aux favoris";
+
+    let b2 = document.createElement("button");
+    b2.id = "next";
+    b2.textContent = "➡️ Suivant";
+
+    button.appendChild(b1);
+    button.appendChild(b2);
+}
+
+async function setuplogin(userInterface) {
     logMessage('change', "Configuration de la fonction de connexion"); // Début du groupe de logs
 
     let btn = document.createElement("button");
@@ -24,8 +65,8 @@ function setuplogin(userInterface = document.getElementById("userInterface")) {
     userInterface.appendChild(btn);
 }
 
-async function setuploged(userInterface = document.getElementById("userInterface")) {
-    logMessage('change', "Configuration de la fonction de contrôle utilisateur"); // Début du groupe de logs
+async function setuploged(userInterface) {
+    logMessage('change', "Configuration de la fonction de contrôle utilisateur", 'loged'); // Début du groupe de logs
 
     await createPDP(userInterface);
 
@@ -46,126 +87,8 @@ async function setuploged(userInterface = document.getElementById("userInterface
     div.appendChild(btn);
 }
 
-function setupUI() {
-    logMessage('group', "Configuration de la page"); // Début du groupe de logs
-
-    document.querySelectorAll(".no-js").forEach((element) => {
-        logMessage('deletion', "Suppression des elements no-js");
-        element.remove();
-    });
-
-    let body = document.querySelector("body");
-
-    let zenith = document.createElement("div");
-    zenith.id = "zenith";
-    body.appendChild(zenith);
-    userInterface(zenith);
-
-    let app = document.createElement("div");
-    app.id = "app";
-    body.appendChild(app);
-
-    let poster = document.createElement("img");
-    poster.id = "poster";
-    poster.src = "Images/Default.png";
-    poster.alt = "Default Image";
-
-    let containerImg = document.createElement("div");
-    containerImg.id = "container-img";
-
-    let title = document.createElement("h2");
-    title.textContent = "Default Movie";
-
-    app.appendChild(containerImg);
-    app.appendChild(title);
-    zenith.appendChild(poster);
-
-    let button = document.createElement("div");
-    button.id = "buttons";
-    app.appendChild(button);
-
-    let b1 = document.createElement("button");
-    b1.id = "like";
-    b1.textContent = "❤️ Ajouter aux favoris";
-
-    let b2 = document.createElement("button");
-    b2.id = "next";
-    b2.textContent = "➡️ Suivant";
-
-    button.appendChild(b1);
-    button.appendChild(b2);
-
-    console.groupEnd();
-}
-
-async function loadImage(element, imagePath) {
-    const resolutions = [
-        { size: 'w45', width: 45 },
-        { size: 'w92', width: 92 },
-        { size: 'w154', width: 154 },
-        { size: 'w185', width: 185 },
-        { size: 'w300', width: 300 },
-        { size: 'w342', width: 342 },
-        { size: 'w500', width: 500 },
-        { size: 'w780', width: 780 },
-        { size: 'w1280', width: 1280 },
-        { size: 'original', width: Infinity }
-    ];
-
-    // Afficher la largeur de l'élément
-    logMessage('log', "Élément largeur: " + element.clientWidth);
-
-    // Fonction pour calculer le flou
-    function calculateBlur(elementWidth, loadedWidth) {
-        const blur = Math.max(15 - (loadedWidth / 20), 0); // Ajuster selon besoin
-        logMessage('loading', `Calcul du flou: ${blur} (Élément Largeur: ${elementWidth}, Chargé Largeur: ${loadedWidth})`);
-        return blur;
-    }
-
-    // Variable pour suivre l'indice de l'image chargée
-    let lastLoadedIndex = -1;
-
-    // Fonction asynchrone pour charger l'image
-    async function loadImageAtIndex(index) {
-        if (index < 0 || index >= resolutions.length) return; // Vérifier l'indice
-
-        const res = resolutions[index]; // Obtenir la résolution actuelle
-        // Si l'indice est inférieur à lastLoadedIndex, ne rien faire
-        if (lastLoadedIndex >= index) return;
-
-        logMessage('loading', `Chargement de l'image à l'indice ${index}: ${res.size}`);
-        
-        let img = new Image();
-        img.src = `https://image.tmdb.org/t/p/${res.size}${imagePath}`;
-
-        // Lorsque l'image est chargée
-        img.onload = () => {
-            logMessage('success', `Image chargée: ${img.src}`);
-            lastLoadedIndex = index; // Mettre à jour l'indice
-            element.src = img.src; // Changer le src de l'élément
-            element.style.filter = `blur(${calculateBlur(element.clientWidth, res.width)}px)`; // Appliquer le flou
-        };
-
-        // Retourner une promesse qui se résout lorsque l'image est chargée
-        return new Promise((resolve) => {
-            img.onload = () => {
-                lastLoadedIndex = index; // Mettre à jour l'indice
-                element.src = img.src; // Changer le src de l'élément
-                element.style.filter = `blur(${calculateBlur(element.clientWidth, res.width)}px)`; // Appliquer le flou
-                resolve(index); // Résoudre la promesse une fois l'image chargée
-            };
-        });
-    }
-
-    // Appeler la fonction pour charger toutes les résolutions, une par une
-    for (let i = 0; i < resolutions.length; i++) {
-        await loadImageAtIndex(i);
-    }
-}
-
-// Exemple d'utilisation
 async function createPDP(userInterface) {
-    logMessage('group', "Chargement des données utilisateur..."); // Message de débogage
+    logMessage('loading', "Chargement des données utilisateur...", 'createPDP', null, true); // Message de débogage
     let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
     
     let pdp = document.createElement("img");
@@ -176,38 +99,76 @@ async function createPDP(userInterface) {
     pdp.style.objectPosition = "center"; // Centre l'image si besoin
     pdp.style.borderRadius = "50%"; // Effet rond
 
-    logMessage('loading', "Chargement de l'image pour l'utilisateur...");
-    userInterface.appendChild(pdp);
-    loadImage(pdp, data.avatar.tmdb.avatar_path);
-    
     pdp.addEventListener("mouseenter", showOverlay); // Quand on entre dans pdp
-    console.groupEnd();
+
+    logMessage('loading', "Chargement de l'image pour l'utilisateur...");
+
+    await attendreFonction("loadImage");
+    loadImage(pdp, data.avatar.tmdb.avatar_path);
+
+    userInterface.appendChild(pdp);
+
+    logMessage('end');
 }
 
-function showOverlay(event) {
-    pdp.removeEventListener("mouseenter", showOverlay);
+async function showOverlay(event) {
+    event.target.removeEventListener("mouseenter", showOverlay);
     event.target.parentElement.addEventListener("mouseleave", DiscareOverlay); // Quand on quitte le parent
     let btnLogout = document.getElementById("list");
     btnLogout.style.display = "grid";
 }
 
-function DiscareOverlay(event) {
+async function DiscareOverlay(event) {
     event.target.removeEventListener("mouseleave", DiscareOverlay);
-    pdp.addEventListener("mouseenter", showOverlay);
+    document.getElementById("pdp").addEventListener("mouseenter", showOverlay);
     let btnLogout = document.getElementById("list");
     btnLogout.style.display = "none";
 }
 
 async function test() {
-    logMessage('loading', "Test en cours...");
+    logMessage('loading', "Test en cours...", 'test');
 }
 
-function setupTest() {
-    logMessage('group', "Configuration des tests..."); // Message de débogage
-    creerElementsDepuisHTML(`<button style="top: 0px; left: 0px;" id="test">Test</button>`, "#zenith")
-        .addEventListener("click", test);
-    logMessage('success', 'Bouton de test créé.'); // Message de débogage
-    console.groupEnd();
+async function setupTest(zenith) {
+    logMessage('creation', "Configuration des tests...", 'setup', null, true);
+
+    let btn = document.createElement("button")
+
+    btn.id = "test";
+    btn.textContent = "Test";
+    btn.style.top = "0px";
+    btn.style.left = "0px";
+
+    zenith.appendChild(btn);
+
+    btn.addEventListener("click", test);
+
+    logMessage('success', 'Bouton de test créé.', 'setup');
+    logMessage('end');
+}
+
+async function setupUI() {
+    logMessage('creation', "Configuration de la page", "setup", null, true); // Début du groupe de logs
+
+    document.querySelectorAll(".no-js").forEach((element) => {
+        element.remove();
+    });
+
+    logMessage('deletion', "suppression des elements no-js", "setup");
+
+    let body = document.querySelector("body");
+
+    let zenith = document.createElement("div");
+    zenith.id = "zenith";
+    body.appendChild(zenith);
+    zenithInterface(zenith);
+
+    let app = document.createElement("div");
+    app.id = "app";
+    body.appendChild(app);
+    appInterface(app);
+
+    logMessage('end');
 }
 
 afficherDocumentation("setup", [

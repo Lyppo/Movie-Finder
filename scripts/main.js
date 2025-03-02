@@ -1,6 +1,17 @@
-logMessage('info', "🟢 Initialisation..."); // Message de débogage
-getCookies();
-load(); // Charge les cookies
-setupUI(); // Initialise l'interface utilisateur
-setupTest(); // Initialise les tests
-logMessage('info', "🟢 Initialisation terminée."); // Message de débogage
+async function attendreFonction(nomFonction) {
+    while (typeof window[nomFonction] !== "function") {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+}
+
+async function init() {
+
+    await logMessage('creation', "Initialisation...", "main");
+
+    await attendreFonction("setupUI");
+    setupUI();
+
+    await logMessage('success', "Initialisation terminée.", "main");
+}
+
+init();
