@@ -96,17 +96,17 @@ async function createPDP(userInterface) {
     pdp.style.width = "65px";  // Largeur fixe
     pdp.style.height = "65px"; // Hauteur fixe
     pdp.style.objectFit = "cover"; // Remplit sans déformation
-    pdp.style.objectPosition = "center"; // Centre l'image si besoin
     pdp.style.borderRadius = "50%"; // Effet rond
+    pdp.style.display = "none";
+
+    userInterface.appendChild(pdp);
 
     pdp.addEventListener("mouseenter", showOverlay); // Quand on entre dans pdp
 
-    logMessage('loading', "Chargement de l'image pour l'utilisateur...");
+    logMessage('loading', "Chargement de l'image pour l'utilisateur...", null, null, false, true);
 
     await attendreFonction("loadImage");
-    loadImage(pdp, data.avatar.tmdb.avatar_path);
-
-    userInterface.appendChild(pdp);
+    await loadImage(pdp, data.avatar.tmdb.avatar_path);
 
     logMessage('end');
 }
@@ -127,6 +127,8 @@ async function DiscareOverlay(event) {
 
 async function test() {
     logMessage('loading', "Test en cours...", 'test');
+    let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
+    loadImage(document.getElementById("poster"), data.avatar.tmdb.avatar_path);
 }
 
 async function setupTest(zenith) {
@@ -170,114 +172,3 @@ async function setupUI() {
 
     logMessage('end');
 }
-
-afficherDocumentation("setup", [
-    {
-        nom: "userInterface",
-        params: ["zenith"],
-        style: "addition",
-        descriptions: [
-            "Crée et affiche l'interface utilisateur en fonction de l'état de connexion.",
-            "1. Vérifie si l'utilisateur est connecté via `loged()`.",
-            "2. Charge `setuploged()` si connecté, sinon `setuplogin()`.",
-            "3. Ajoute `userInterface` à `zenith`."
-        ]
-    },
-    {
-        nom: "setuplogin",
-        params: ["userInterface"],
-        style: "addition",
-        descriptions: [
-            "Ajoute un bouton 'Se connecter' pour les utilisateurs non connectés.",
-            "1. Crée un bouton avec l'ID `btnLogin`.",
-            "2. Associe l'événement `click` pour appeler `login`.",
-            "3. Ajoute le bouton à `userInterface`."
-        ]
-    },
-    {
-        nom: "setuploged",
-        params: ["userInterface"],
-        style: "addition",
-        descriptions: [
-            "Configure l'interface utilisateur pour un utilisateur connecté.",
-            "1. Charge l'image de profil via `createPDP()`.",
-            "2. Ajoute un conteneur `list` contenant le bouton `Se déconnecter`.",
-            "3. Associe `logout` au bouton de déconnexion."
-        ]
-    },
-    {
-        nom: "setupUI",
-        params: [],
-        style: "addition",
-        descriptions: [
-            "Construit l'interface graphique de la page.",
-            "1. Supprime les éléments `no-js`.",
-            "2. Crée et ajoute `zenith`, `userInterface` et `app`.",
-            "3. Initialise une image par défaut et les boutons de navigation.",
-            "4. Lance `userInterface(zenith)` pour gérer l'authentification."
-        ]
-    },
-    {
-        nom: "loadImage",
-        params: ["element", "imagePath"],
-        style: "loading",
-        descriptions: [
-            "Charge une image en plusieurs résolutions pour un affichage progressif.",
-            "1. Définit une liste de résolutions de TMDb.",
-            "2. Sélectionne la meilleure résolution pour l'élément.",
-            "3. Applique un effet de flou dynamique en fonction de la résolution."
-        ]
-    },
-    {
-        nom: "createPDP",
-        params: ["userInterface"],
-        style: "change",
-        descriptions: [
-            "Affiche l'image de profil de l'utilisateur connecté.",
-            "1. Récupère les données utilisateur via l'API TMDb.",
-            "2. Crée et configure une image circulaire `pdp`.",
-            "3. Charge l'image avec `loadImage(pdp, data.avatar.tmdb.avatar_path)`,",
-            "4. Active les interactions d'affichage de l'overlay (déconnexion)."
-        ]
-    },
-    {
-        nom: "showOverlay",
-        params: ["event"],
-        style: "addition",
-        descriptions: [
-            "Affiche la liste d'options utilisateur au survol de l'image de profil.",
-            "1. Supprime l'événement `mouseenter` de `pdp`.",
-            "2. Affiche `#list`.",
-            "3. Ajoute `mouseleave` à son parent pour masquer l'overlay."
-        ]
-    },
-    {
-        nom: "DiscareOverlay",
-        params: ["event"],
-        style: "deletion",
-        descriptions: [
-            "Masque l'overlay utilisateur lorsque la souris quitte la zone.",
-            "1. Supprime l'événement `mouseleave`.",
-            "2. Réactive `mouseenter` sur `pdp`.",
-            "3. Cache `#list`."
-        ]
-    },
-    {
-        nom: "test",
-        params: [],
-        style: "change",
-        descriptions: [
-            "Affiche un log indiquant un test en cours."
-        ]
-    },
-    {
-        nom: "setupTest",
-        params: [],
-        style: "change",
-        descriptions: [
-            "Ajoute un bouton de test à l'interface.",
-            "1. Insère un bouton `Test` dans `#zenith`.",
-            "2. Associe l'événement `click` à `test()`."
-        ]
-    }
-]);

@@ -5,6 +5,12 @@ let ACCOUNT_ID = ""; // ID du compte
 let ACCESS_TOKEN = ""; // Token d'accès
 let SESSION_ID = ""; // ID de session
 
+async function attendreFonction(nomFonction) {
+    while (typeof window[nomFonction] !== "function") {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+}
+
 // 🔹 Fonction pour récupérer les cookies
 async function getCookies() {
     logMessage('cookies', "Chargement des cookies...", "cookies", null, true); // Démarre un groupe de log pour le chargement des cookies
@@ -31,6 +37,9 @@ async function getCookies() {
 }
 
 async function load() {
+    
+    await attendreFonction("logMessage");
+
     logMessage('loading', "chargement des cookies...", 'cookies');
     await getCookies();
     ACCESS_TOKEN = cookies["ACCESS_TOKEN"];
@@ -75,41 +84,3 @@ async function clearCookie(name) {
     logMessage('deletion', `Cookie supprimé : ${name}`); // Affiche le nom du cookie supprimé
     logMessage('end'); // Assurez-vous que le groupe est toujours fermé
 }
-
-afficherDocumentation("cookies", [
-    {
-        nom: "getCookies",
-        params: [],
-        style: "log",
-        descriptions: [
-            "Récupère tous les cookies stockés dans le navigateur.",
-            "Affiche les cookies sous forme de tableau dans la console.",
-            "Si aucun cookie n'est trouvé, un avertissement est affiché."
-        ]
-    },
-    {
-        nom: "setCookie",
-        params: [
-            { forced: "name" }, // Paramètre obligatoire : nom du cookie
-            { forced: "value" } // Paramètre obligatoire : valeur du cookie
-        ],
-        style: "addition",
-        descriptions: [
-            "Ajoute un cookie avec un nom et une valeur spécifiés.",
-            "Le cookie a une durée de vie de 30 jours.",
-            "Affiche un message de confirmation et le cookie ajouté."
-        ]
-    },
-    {
-        nom: "clearCookie",
-        params: [
-            { forced: "name" } // Paramètre obligatoire : nom du cookie à supprimer
-        ],
-        style: "deletion",
-        descriptions: [
-            "Supprime un cookie spécifique en utilisant son nom.",
-            "Si le cookie n'existe pas, un avertissement est affiché.",
-            "Affiche les cookies restants après la suppression."
-        ]
-    }
-]);

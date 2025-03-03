@@ -57,21 +57,3 @@ function ouvrirPopupLogin(requestToken) {
         logMessage('end'); // Ferme le groupe de logs
     });
 }
-
-afficherDocumentation("popup", [
-    {
-        nom: "ouvrirPopupLogin",
-        params: [
-            { forced: "requestToken" } // Token de requête obligatoire
-        ],
-        style: "loading",
-        descriptions: [
-            "Ouvre une popup de connexion à TMDb avec le `request_token` fourni.",
-            "Vérifie si le `request_token` est présent, sinon une erreur est affichée.",
-            "Calcule la position de la popup pour la centrer sur l'écran.",
-            "Ajoute un écouteur d'événements pour détecter la validation de connexion.",
-            "Ferme la popup après 30 secondes si l'utilisateur ne s'authentifie pas.",
-            "Renvoie `true` si l'authentification réussit, sinon `false`."
-        ]
-    }
-]);

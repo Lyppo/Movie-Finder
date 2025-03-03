@@ -65,32 +65,3 @@ async function logout(event) {
         logMessage('end');
     }
 }
-
-afficherDocumentation("logout", [
-    {
-        nom: "logoutClear",
-        params: [],
-        style: "deletion",
-        descriptions: [
-            "Supprime toutes les données de connexion de l'utilisateur.",
-            "1. Supprime la session en appelant l'API de TMDb.",
-            "2. Supprime le token d'accès via `logoutRequest()`.",
-            "3. Efface les cookies (`ACCOUNT_ID`, `ACCESS_TOKEN`, `SESSION_ID`).",
-            "4. Gère les erreurs et affiche des logs appropriés."
-        ]
-    },
-    {
-        nom: "logout",
-        params: ["event"],
-        style: "deletion",
-        descriptions: [
-            "Gère la déconnexion de l'utilisateur et la réinitialisation de l'interface.",
-            "1. Empêche le comportement par défaut du bouton si un `event` est fourni.",
-            "2. Désactive temporairement le bouton de déconnexion pour éviter les doubles clics.",
-            "3. Appelle `logoutClear()` pour effacer les données de connexion.",
-            "4. Gère les erreurs et réactive le bouton si la déconnexion échoue.",
-            "5. Supprime les éléments de l'interface utilisateur après déconnexion.",
-            "6. Configure l'affichage de l'interface de connexion via `setuplogin()`."
-        ]
-    }
-]);

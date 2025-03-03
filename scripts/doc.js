@@ -1,6 +1,6 @@
 const debug = false;
 const doc = false;
-const groupe = false;
+const groupe = true;
 
 // Constantes pour les emojis
 const EMOJIS = {
@@ -47,9 +47,9 @@ const FONT_SIZES = {
     info: "font-size: 0.9em;"          // Standard pour l'information
 };
 
-async function logMessage(type = 'log', message = "exemple", name = null, data = null, group = false) {
+async function logMessage(type, message = "", name = null, data = null, group = false, forced = false) {
 
-    if (!debug && (type !== 'warn' && type !== 'error')) return; // Ne pas afficher les logs en mode non-debug
+    if (!forced && !debug && (type !== 'warn' && type !== 'error')) return; // Ne pas afficher les logs en mode non-debug
 
     if (type === 'end') {
         if (!groupe)console.groupEnd();
@@ -157,49 +157,3 @@ async function afficherDocumentation(titre = "Unnamed", fonctions = []) {
 
     console.groupEnd();
 }
-
-// Appel de la documentation pour logMessage
-afficherDocumentation("doc", [
-    {
-        nom: "logMessage",
-        params: [
-            { forced: "type" },
-            { forced: "message" },
-            "name",
-            "data"
-        ],
-        descriptions: [
-            "Affiche un message dans la console.",
-            "Le type détermine le niveau de journalisation (log, warn, error, etc.).",
-            "Le message est le texte affiché.",
-            "Les paramètres 'name' et 'data' sont optionnels pour des informations supplémentaires."
-        ]
-    },
-    {
-        nom: "afficherDocumentation",
-        params: [
-            { forced: "titre" },
-            { forced: "fonctions" }
-        ],
-        descriptions: [
-            "afficherDocumentation permet d'afficher la documentation des fonctions d'un fichier JavaScript dans la console.",
-            "Elle prend deux paramètres principaux :",
-            "1. titre : un titre qui représente le nom du fichier ou de la catégorie pour lequel la documentation est générée.",
-            "2. fonctions : un tableau d'objets représentant les fonctions du fichier. Chaque objet dans le tableau doit contenir les informations suivantes :",
-            "- nom : Le nom de la fonction à afficher.",
-            "- params : Un tableau de paramètres que la fonction accepte. Chaque paramètre peut être une chaîne de caractères (nom du paramètre) ou un objet avec une clé `forced` pour indiquer que le paramètre est obligatoire.",
-            "- style : Un paramètre optionnel qui définit le style de journalisation (par défaut 'log'). Cela permet de personnaliser la couleur, et d'autres aspects visuels de l'affichage des fonctions.",
-            "- descriptions : Un tableau de chaînes de caractères qui décrit brièvement la fonction. Si ce tableau est vide ou non fourni, une description par défaut sera utilisée.",
-            "Exemple d'utilisation :",
-            "afficherDocumentation('Mon fichier', [",
-            "    {",
-            "        nom: 'maFonction',",
-            "        params: ['param1', { forced: 'param2' }],",
-            "        style: 'success',",
-            "        descriptions: ['Cette fonction fait quelque chose de génial.']",
-            "    }",
-            "]);",
-            "Cet exemple afficherait la documentation pour une fonction appelée 'maFonction', avec deux paramètres : 'param1' (optionnel) et 'param2' (obligatoire). La fonction serait affichée avec le style de succès (vert)."
-        ]
-    }
-]);

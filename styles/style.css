@@ -66,7 +66,8 @@ button:hover {
 /* Styles pour l'affiche */
 #poster {
     height: 450px;
-    width: auto;
+    width: calc(2/3 * 450px);
+    object-fit: cover;
     top: 50%;
     left: 50%;
     transform: translate(-50%, calc(-50% - 60px));
@@ -75,12 +76,8 @@ button:hover {
 #poster:hover {
     box-shadow: black 0 0 10px;
     height: 500px;
+    width: calc(2/3 * 500px);
     border-color: gray;
-}
-
-/* Flou sur les éléments voisins lors du survol de l'affiche */
-#poster:hover ~ * {
-    filter: blur(5px);
 }
 
 /* Conteneur de l'image */
