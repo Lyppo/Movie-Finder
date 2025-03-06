@@ -1,174 +1,121 @@
+async function createZenith() {
+
+    const zenith = document.createElement("div");
+
+    zenithInterface(zenith);
+
+    zenith.id = "zenith";
+    document.body.prepend(zenith);
+}
+
+async function createApp() {
+
+    const app = document.createElement("div");
+    app.id = "app";
+    document.body.appendChild(app);
+}
+
 async function zenithInterface(zenith) {
-    logMessage('creation', "Création du profil utilisateur...", 'zenith', null, true);
 
-    setupTest(zenith);
+    createTest(zenith);
 
-    let userInterface = document.createElement("div");
+    createUserInterface(zenith);
+}
+
+async function createUserInterface(zenith) {
+
+    const userInterface = document.createElement("div");
+
+    if (await loged()) createLoged(userInterface);
+
+    else createLogin(userInterface);
+
     userInterface.id = "userInterface";
+    userInterface.classList.add("list");
     zenith.appendChild(userInterface);
-
-    logMessage('creation', "interface utilisateur créée.", 'zenith');
-
-    await attendreFonction("loged");
-    await attendreFonction("request");
-
-    if (await loged()) {
-        setuploged(userInterface);
-    } else {
-        setuplogin(userInterface);
-    }
-
-    let poster = document.createElement("img");
-    poster.id = "poster";
-    poster.src = "Images/Default.png";
-    poster.alt = "Default Image";
-    
-    zenith.appendChild(poster);
-
-    logMessage('end');
 }
 
-async function appInterface(app) {
+async function createLogin(userInterface) {
 
-    let containerImg = document.createElement("div");
-    containerImg.id = "container-img";
-
-    let title = document.createElement("h2");
-    title.textContent = "Default Movie";
-
-    app.appendChild(containerImg);
-    app.appendChild(title);
-
-    let button = document.createElement("div");
-    button.id = "buttons";
-    app.appendChild(button);
-
-    let b1 = document.createElement("button");
-    b1.id = "like";
-    b1.textContent = "❤️ Ajouter aux favoris";
-
-    let b2 = document.createElement("button");
-    b2.id = "next";
-    b2.textContent = "➡️ Suivant";
-
-    button.appendChild(b1);
-    button.appendChild(b2);
-}
-
-async function setuplogin(userInterface) {
-    logMessage('change', "Configuration de la fonction de connexion"); // Début du groupe de logs
-
-    let btn = document.createElement("button");
+    const btn = document.createElement("button");
     btn.id = "btnLogin";
     btn.textContent = "Se connecter";
     btn.addEventListener("click", login);
     userInterface.appendChild(btn);
 }
 
-async function setuploged(userInterface) {
-    logMessage('change', "Configuration de la fonction de contrôle utilisateur", 'loged'); // Début du groupe de logs
+async function createLoged(userInterface) {
 
-    await createPDP(userInterface);
+    createPDP(userInterface);
 
-    let div = document.createElement("div");
+    const div = document.createElement("div");
+
+    createLogout(div);
+
     div.id = "list";
+    div.classList.add("list");
     div.style.display = "none";
-    div.style.gridTemplateColumns = "1fr";
-    div.style.gap = "10px";
-    div.style.justifyItems = "center";
-    div.style.border = "1px solid gray";
-
     userInterface.appendChild(div);
+}
 
-    let btn = document.createElement("button");
+async function createLogout(div) {
+
+    const btn = document.createElement("button");
     btn.id = "btnLogout";
     btn.textContent = "Se déconnecter";
-    btn.addEventListener("click", logout);
     div.appendChild(btn);
+    btn.addEventListener("click", logout);
 }
 
 async function createPDP(userInterface) {
-    logMessage('loading', "Chargement des données utilisateur...", 'createPDP', null, true); // Message de débogage
-    let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
-    
+
+    let div = document.createElement("div");
+
+    div.id = "englob-pdp";
+    div.style.overflow = "hidden";
+    userInterface.appendChild(div);
+
     let pdp = document.createElement("img");
+
     pdp.id = "pdp";
-    pdp.style.width = "65px";  // Largeur fixe
-    pdp.style.height = "65px"; // Hauteur fixe
-    pdp.style.objectFit = "cover"; // Remplit sans déformation
-    pdp.style.borderRadius = "50%"; // Effet rond
-    pdp.style.display = "none";
+    pdp.style.width = "65px";
+    pdp.style.height = "65px";
+    pdp.style.objectFit = "cover";
+    pdp.style.borderRadius = "50%";
+    pdp.src = "../Images/Default-Profile.png"
 
-    userInterface.appendChild(pdp);
+    div.prepend(pdp);
+    pdp.addEventListener("mouseenter", showUserMenu);
 
-    pdp.addEventListener("mouseenter", showOverlay); // Quand on entre dans pdp
+    if (await loged()) {
 
-    logMessage('loading', "Chargement de l'image pour l'utilisateur...", null, null, false, true);
+        pdp.style.display = "none";
+        
+        const data = await request('GET', "https://api.themoviedb.org/3/account/{account_id}", { session_id: '' });
+        
+        await loadImage(pdp, data.avatar.tmdb.avatar_path);
 
-    await attendreFonction("loadImage");
-    await loadImage(pdp, data.avatar.tmdb.avatar_path);
-
-    logMessage('end');
+        pdp.style.display = "initial";
+    }
 }
 
-async function showOverlay(event) {
-    event.target.removeEventListener("mouseenter", showOverlay);
-    event.target.parentElement.addEventListener("mouseleave", DiscareOverlay); // Quand on quitte le parent
-    let btnLogout = document.getElementById("list");
-    btnLogout.style.display = "grid";
-}
+async function createTest(zenith) {
 
-async function DiscareOverlay(event) {
-    event.target.removeEventListener("mouseleave", DiscareOverlay);
-    document.getElementById("pdp").addEventListener("mouseenter", showOverlay);
-    let btnLogout = document.getElementById("list");
-    btnLogout.style.display = "none";
-}
-
-async function test() {
-    logMessage('loading', "Test en cours...", 'test');
-    let data = await request("https://api.themoviedb.org/3/account/{account_id}", "GET", { session_id: '' });
-    loadImage(document.getElementById("poster"), data.avatar.tmdb.avatar_path);
-}
-
-async function setupTest(zenith) {
-    logMessage('creation', "Configuration des tests...", 'setup', null, true);
-
-    let btn = document.createElement("button")
+    const btn = document.createElement("button");
 
     btn.id = "test";
     btn.textContent = "Test";
-    btn.style.top = "0px";
-    btn.style.left = "0px";
+    btn.style.top = "10px";
+    btn.style.left = "10px";
 
-    zenith.appendChild(btn);
+    zenith.prepend(btn);
 
     btn.addEventListener("click", test);
-
-    logMessage('success', 'Bouton de test créé.', 'setup');
-    logMessage('end');
 }
 
-async function setupUI() {
-    logMessage('creation', "Configuration de la page", "setup", null, true); // Début du groupe de logs
+async function setup() {
 
-    document.querySelectorAll(".no-js").forEach((element) => {
-        element.remove();
-    });
+    createZenith();
 
-    logMessage('deletion', "suppression des elements no-js", "setup");
-
-    let body = document.querySelector("body");
-
-    let zenith = document.createElement("div");
-    zenith.id = "zenith";
-    body.appendChild(zenith);
-    zenithInterface(zenith);
-
-    let app = document.createElement("div");
-    app.id = "app";
-    body.appendChild(app);
-    appInterface(app);
-
-    logMessage('end');
+    createApp();
 }

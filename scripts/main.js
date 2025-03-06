@@ -1,17 +1,20 @@
-async function attendreFonction(nomFonction) {
-    while (typeof window[nomFonction] !== "function") {
+async function waitToLoad() {
+    while (typeof LOAD === 'undefined') {
         await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+
+    for (let name of NEEDS) {
+        while (typeof window[name] === 'undefined') {
+            await new Promise(resolve => requestAnimationFrame(resolve));
+        }
     }
 }
 
 async function init() {
 
-    await logMessage('creation', "Initialisation...", "main");
+    await waitToLoad();
 
-    await attendreFonction("setupUI");
-    setupUI();
-
-    await logMessage('success', "Initialisation terminée.", "main");
+    setup();
 }
 
 init();
