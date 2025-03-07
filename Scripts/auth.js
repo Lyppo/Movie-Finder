@@ -74,6 +74,13 @@ async function requestAuth(type, url, content) {
 
         return data;
     } catch (error) {
-        return log('Erreur lors de la requête d\'authentification', 'error', error, 'Réseau');
+
+        import('./localAdressDebug.js')
+            .then(module => {
+                return module.requestAuth();
+            })
+            .catch(err => {
+                return log('Erreur lors de la requête d\'authentification', 'error', error, 'Réseau');
+            });
     }
 }

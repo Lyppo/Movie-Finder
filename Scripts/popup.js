@@ -22,17 +22,18 @@ async function message(event) {
 }
 
 async function popupCheck(popup, resolve) {
-    log('Vérification de l\'état du popup', 'log', { popupClosed: popup.closed, popupEnded }, 'Popup');
 
     if (popupEnded) {
         window.removeEventListener("message", message);
         popup.close();
         log('Popup fermé après authentification réussie', 'success', null, 'Popup');
         resolve(true);
+        return;
     }
     else if (popup.closed) {
         log('Popup fermé prématurément', 'error', null, 'Popup');
         resolve(false);
+        return;
     }
 
     requestAnimationFrame(() => popupCheck(popup, resolve));
