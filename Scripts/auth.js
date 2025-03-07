@@ -63,7 +63,7 @@ async function requestAuth(type, url, content) {
     log('Envoi de la requête d\'authentification', 'request', { type, url, content }, 'Réseau');
 
     try {
-        const response = await fetch('https://tmdb-request-debug.antodu72210.workers.dev/', {
+        const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
             method: type,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: url, content: content })
@@ -75,12 +75,11 @@ async function requestAuth(type, url, content) {
         return data;
     } catch (error) {
 
-        import('./localAdressDebug.js')
-            .then(module => {
-                return module.requestAuth();
-            })
-            .catch(err => {
-                return log('Erreur lors de la requête d\'authentification', 'error', error, 'Réseau');
-            });
+        try {
+            const module = await import('./localAdressDebug.js');
+            return await module.requestAuth(type, url, content);
+        } catch (error) {
+            return log('Erreur lors de la requête d\'authentification', 'error', error, 'Réseau');
+        }
     }
 }
