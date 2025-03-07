@@ -1,5 +1,5 @@
 async function createRequestToken() {
-    let redirect_to = window.location.origin + "/popup.html";
+    let redirect_to = window.location.origin + window.location.pathname + "/popup.html";
 
     log('Création d\'un token de requête', 'request', { redirect_to }, 'Authentification');
 
