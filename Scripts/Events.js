@@ -29,7 +29,10 @@ async function login(event) {
     const requestToken = await createRequestToken();
     log('Token de requête créé', 'success', { requestToken }, 'Authentification');
 
-    const authenticated = await openPopup(requestToken);
+    const [authenticated, popup]= await openPopup(requestToken);
+
+    popup.close();
+    
     log('État de l\'authentification', 'log', { authenticated }, 'Authentification');
 
     if (!authenticated) {

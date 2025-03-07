@@ -27,12 +27,12 @@ async function popupCheck(popup, resolve) {
         window.removeEventListener("message", message);
         popup.close();
         log('Popup fermé après authentification réussie', 'success', null, 'Popup');
-        resolve(true);
+        resolve([true, popup]);
         return;
     }
     else if (popup.closed) {
         log('Popup fermé prématurément', 'error', null, 'Popup');
-        resolve(false);
+        resolve([false, popup]);
         return;
     }
 
