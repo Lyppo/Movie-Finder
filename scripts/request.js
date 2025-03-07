@@ -1,5 +1,7 @@
 async function request(type, url, params = {}, content = {}) {
 
+    log(`Envoi de la requête ${type} vers ${url}`, 'request', { params, content }, 'request');
+
     let searchParams = new URLSearchParams(params);
     url += searchParams.toString() ? `?${searchParams.toString()}` : "";
 
@@ -8,6 +10,8 @@ async function request(type, url, params = {}, content = {}) {
     }
 
     try {
+        log('Tentative d\'exécution de la requête...', 'log', { url, type, content }, 'request');
+
         let response = await fetch(url, {
             method: type,
             headers: {
@@ -17,11 +21,19 @@ async function request(type, url, params = {}, content = {}) {
             body: Object.keys(content).length > 0 ? JSON.stringify(content) : undefined
         });
 
-        const data = await response.json();
+        // Vérification de la réponse
+        if (!response.ok) {
+            log(`Échec de la requête, statut : ${response.status}`, 'failure', { response }, 'request');
+            return;
+        }
 
+        const data = await response.json();
+        
+        log('Réponse reçue avec succès', 'success', { data }, 'request');
+        
         return data;
     } catch (error) {
         
-        return;
+        return log('Erreur lors de la requête', 'error', { error }, 'request');
     }
 }

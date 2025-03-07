@@ -36,6 +36,9 @@ button {
     top: 25px;
     right: 25px;
     width: 200px;
+    padding: 10px;
+    border: 1px solid gray;
+    box-shadow: black 0 0 10px;
 }
 
 #btnLogout {
@@ -45,8 +48,6 @@ button {
 .list {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 10px;
+    grid-gap: 20px;
     justify-items: center;
-    border: 1px solid gray;
-    box-shadow: black 0 0 10px;
 }

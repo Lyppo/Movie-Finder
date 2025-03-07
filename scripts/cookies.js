@@ -5,10 +5,9 @@ let ACCESS_TOKEN = "";
 let SESSION_ID = "";
 
 async function getCookies() {
+    log('Tentative de récupération des cookies', 'cookies', null, 'Cookies');
 
-    if (!document.cookie) {
-        return;
-    }
+    if (!document.cookie) return log('Aucun cookie trouvé', 'failure', null, 'Cookies');
 
     cookies = {};
     let cookiesArray = document.cookie.split('; ');
@@ -19,38 +18,42 @@ async function getCookies() {
             cookies[name] = decodeURIComponent(value);
         }
     }
+
+    log('Cookies récupérés avec succès', 'success', cookies, 'Cookies');
 }
 
 async function setCookie(name, value) {
-
-    if (!name || !value) {
-        return;
-    }
-
     document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${2592000}; path=/`;
     cookies[name] = value;
+
+    log(`Cookie défini : ${name} = ${value} avec une durée de vie de 30 jours`, 'add', null, 'Cookies');
 }
 
 async function clearCookie(name) {
-
-    if (!cookies[name]) {
-        return;
-    }
+    if (!cookies[name]) return log(`Tentative de suppression d'un cookie inexistant : ${name}`, 'warn', null, 'Cookies');
 
     document.cookie = `${name}=; max-age=0; path=/`;
     delete cookies[name];
 
-    console.table(cookies);
+    log(`Cookie supprimé : ${name}`, 'remove', null, 'Cookies');
 }
 
 async function load() {
-
     if (!ACCESS_TOKEN) {
+        log('Chargement des cookies', 'cookies', null, 'Cookies');
         
         await getCookies();
 
         ACCESS_TOKEN = cookies["ACCESS_TOKEN"];
         ACCOUNT_ID = cookies["ACCOUNT_ID"];
         SESSION_ID = cookies["SESSION_ID"];
+
+        if (ACCESS_TOKEN) {
+            log('Données utilisateur chargées avec succès', 'success', { ACCESS_TOKEN, ACCOUNT_ID, SESSION_ID }, 'Cookies');
+        } else {
+            log('Données utilisateur introuvables', 'failure', null, 'Cookies');
+        }
+    } else {
+        log("Cookies déjà chargés", 'failure', cookies, 'Cookies');
     }
 }

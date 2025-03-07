@@ -178,3 +178,25 @@ async function loadImage(element, imagePath, original = false) {
 function tmpload(element, imagePath) {
     element.src = `https://image.tmdb.org/t/p/original${imagePath}`;
 }
+
+async function loadPDP(pdp) {
+    if (await loged()) {
+        log("Utilisateur connecté, chargement de l'avatar...", 'request', null, 'Setup');
+
+        try {
+            log("Requete pour récupérer les données utilisateur...", 'request', null, 'Setup');
+
+            const data = await request('GET', "https://api.themoviedb.org/3/account/{account_id}", { session_id: '' });
+            
+
+            pdp.style.display = "none";
+            await loadImage(pdp, data.avatar.tmdb.avatar_path);
+
+            pdp.style.display = "initial";
+            log("Avatar chargé avec succès!", 'success', data.avatar.tmdb.avatar_path, 'Setup');
+        } catch (error) {
+            pdp.style.display = "initial";
+            log("Erreur lors du chargement de l'avatar", 'error', error, 'Setup');
+        }
+    }
+}

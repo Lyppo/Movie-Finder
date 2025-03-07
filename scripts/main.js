@@ -14,6 +14,8 @@ async function init() {
 
     await waitToLoad();
 
+    log('Lancement du programme', 'create', null, 'Main');
+
     setup();
 }
 
