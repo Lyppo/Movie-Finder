@@ -1,6 +1,4 @@
 async function createZenith() {
-    log("Création de l'overlay...", 'create', null, 'Setup');
-
     const zenith = document.createElement("div");
 
     createTest(zenith);
@@ -15,8 +13,6 @@ async function createZenith() {
 }
 
 async function createApp() {
-    log("Création de l'interface de l'application...", 'create', null, 'Setup');
-
     const app = document.createElement("div");
     app.id = "app";
 
@@ -26,8 +22,6 @@ async function createApp() {
 }
 
 async function createUserInterface(zenith) {
-    log("Création de l'interface utilisateur...", 'create', null, 'Setup');
-
     const userInterface = document.createElement("div");
 
     if (await loged()) {
@@ -50,8 +44,6 @@ async function createUserInterface(zenith) {
 }
 
 async function createLogin(userInterface) {
-    log("Création du bouton de connexion...", 'create', null, 'Setup');
-
     const btn = document.createElement("button");
     btn.id = "btnLogin";
     btn.textContent = "Se connecter";
@@ -63,8 +55,6 @@ async function createLogin(userInterface) {
 }
 
 async function createLogedList(userInterface) {
-    log("Création de la liste des options de l'utilisateur connecté...", 'create', null, 'Setup');
-
     const div = document.createElement("div");
     
     createLogout(div);
@@ -79,8 +69,6 @@ async function createLogedList(userInterface) {
 }
 
 async function createLogout(list) {
-    log("Création du bouton de déconnexion...", 'create', null, 'Setup');
-
     const btn = document.createElement("button");
     btn.id = "btnLogout";
     btn.textContent = "Se déconnecter";
@@ -92,8 +80,6 @@ async function createLogout(list) {
 }
 
 async function createProfileIMG() {
-    log("Création de l'image de profil...", 'create', null, 'Setup');
-
     let pdp = document.createElement("img");
 
     loadPDP(pdp);
@@ -112,9 +98,6 @@ async function createProfileIMG() {
 }
 
 async function createEnveloppeIMG(userInterface, img, first = false) {
-
-    log("Création de l'enveloppe de l'image de profil...", 'create', null, 'Setup');
-
     let div = document.createElement("div");
 
     div.append(await img);
@@ -130,8 +113,6 @@ async function createEnveloppeIMG(userInterface, img, first = false) {
 }
 
 async function createTest(zenith) {
-    log("Création du bouton de test...", 'create', null, 'Setup');
-
     const btn = document.createElement("button");
     btn.id = "test";
     btn.textContent = "Test";
@@ -145,9 +126,6 @@ async function createTest(zenith) {
 }
 
 async function setup() {
-    log("Démarrage du setup de l'application...", 'create', null, 'Setup');
-
     createZenith()
-    
     createApp()
 }

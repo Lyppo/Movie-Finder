@@ -48,7 +48,7 @@ async function logoutRequest() {
 }
 
 async function requestAuth(type, url, content) {
-    log('Envoi de requête d\'authentification', 'request', { type, url, content }, 'Authentification');
+    log('Envoi de requête d\'authentification', 'request', { type: type, url: url, content: content }, 'Authentification');
 
     try {
         const response = await fetch('https://tmdb-request.antodu72210.workers.dev/', {
@@ -56,8 +56,6 @@ async function requestAuth(type, url, content) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: url, content: content })
         });
-
-        log('Réponse de l\'authentification', 'response', response, 'Authentification');
 
         const data = await response.json();
 

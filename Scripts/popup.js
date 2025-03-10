@@ -1,5 +1,4 @@
 function createPopup(requestToken) {
-    log('Création du popup pour l\'authentification', 'request', { requestToken }, 'Popup');
 
     const POPUP_WIDTH = 640;
     const POPUP_HEIGHT = 360;
@@ -14,9 +13,10 @@ function createPopup(requestToken) {
 }
 
 async function openPopup(requestToken) {
-    log('Ouverture du popup pour l\'authentification', 'request', { requestToken }, 'Popup');
 
     const popup = createPopup(requestToken);
+
+    log('Popup ouvert avec succès', 'success', null, 'Popup')
 
     return new Promise((resolve) => {
         if (!popup) {

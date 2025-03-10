@@ -5,7 +5,6 @@ let ACCESS_TOKEN = "";
 let SESSION_ID = "";
 
 async function getCookies() {
-    log('Tentative de récupération des cookies', 'cookies', null, 'Cookies');
 
     if (!document.cookie) return log('Aucun cookie trouvé', 'failure', null, 'Cookies');
 
@@ -40,7 +39,6 @@ async function clearCookie(name) {
 
 async function load() {
     if (!ACCESS_TOKEN) {
-        log('Chargement des cookies', 'cookies', null, 'Cookies');
         
         await getCookies();
 

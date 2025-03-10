@@ -181,11 +181,8 @@ function tmpload(element, imagePath) {
 
 async function loadPDP(pdp) {
     if (await loged()) {
-        log("Utilisateur connecté, chargement de l'avatar...", 'request', null, 'Setup');
 
         try {
-            log("Requete pour récupérer les données utilisateur...", 'request', null, 'Setup');
-
             const data = await request('GET', "https://api.themoviedb.org/3/account/{account_id}", { session_id: '' });
             
 
@@ -193,10 +190,10 @@ async function loadPDP(pdp) {
             await loadImage(pdp, data.avatar.tmdb.avatar_path);
 
             pdp.style.display = "initial";
-            log("Avatar chargé avec succès!", 'success', data.avatar.tmdb.avatar_path, 'Setup');
+            log("Avatar chargé avec succès!", 'success', null, 'PDP');
         } catch (error) {
             pdp.style.display = "initial";
-            log("Erreur lors du chargement de l'avatar", 'error', error, 'Setup');
+            log("Erreur lors du chargement de l'avatar", 'error', error, 'PDP');
         }
     }
 }
