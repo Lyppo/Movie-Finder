@@ -1,5 +1,5 @@
 async function showUserMenu(event) {
-    log('Affichage du menu utilisateur', 'request', { target: event.target }, 'UI');
+    log('Affichage du menu utilisateur', 'request', null, 'UI');
 
     event.target.removeEventListener("mouseenter", showUserMenu);
     event.target.parentElement.parentElement.addEventListener("mouseleave", DiscareUserMenu);
@@ -9,7 +9,7 @@ async function showUserMenu(event) {
 }
 
 async function DiscareUserMenu(event) {
-    log('Masquage du menu utilisateur', 'request', { target: event.target }, 'UI');
+    log('Masquage du menu utilisateur', 'request', null, 'UI');
 
     event.target.removeEventListener("mouseleave", DiscareUserMenu);
     document.getElementById("pdp").addEventListener("mouseenter", showUserMenu);
@@ -19,7 +19,7 @@ async function DiscareUserMenu(event) {
 }
 
 async function login(event) {
-    log('Tentative de connexion', 'request', { target: event.target }, 'Authentification');
+    log('Tentative de connexion', 'request', null, 'Authentification');
 
     event.target.removeEventListener("click", login);
 
@@ -29,9 +29,7 @@ async function login(event) {
     const requestToken = await createRequestToken();
     log('Token de requête créé', 'success', { requestToken }, 'Authentification');
 
-    const [authenticated, popup]= await openPopup(requestToken);
-
-    popup.close();
+    const authenticated= await openPopup(requestToken);
     
     log('État de l\'authentification', 'log', { authenticated }, 'Authentification');
 
@@ -51,7 +49,7 @@ async function login(event) {
 }
 
 async function logout(event) {
-    log('Tentative de déconnexion', 'request', { target: event.target }, 'Authentification');
+    log('Tentative de déconnexion', 'request', null, 'Authentification');
 
     event.target.removeEventListener("click", logout);
 

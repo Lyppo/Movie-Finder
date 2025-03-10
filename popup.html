@@ -16,6 +16,8 @@
         if (window.opener) {
             try {
                 window.opener.postMessage("authenticated", window.location.origin);
+                // Ferme la fenêtre après l'envoi du message
+                window.close();
             } catch (error) {
                 console.error("Erreur lors de l'envoi du message à la fenêtre parente :", error);
             }
