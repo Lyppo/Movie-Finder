@@ -12,7 +12,7 @@ async function waitToLoad() {
 
 async function init() {
 
-    await waitToLoad();
+    // await waitToLoad();
 
     setup();
 }
