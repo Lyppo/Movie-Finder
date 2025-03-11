@@ -4,10 +4,9 @@ async function createRequestToken() {
 
     const data = await requestAuth('POST', 'https://api.themoviedb.org/4/auth/request_token', { redirect_to });
 
-    if (data.success) {
-        log('Token de requête créé avec succès', 'success', { request_token: data.request_token }, 'Request Token');
-        return data.request_token;
-    } else return log('Erreur lors de la création du token de requête', 'error', data, 'Request Token');
+    if (data.success) return data.request_token;
+
+    else return log('Erreur lors de la création du token de requête', 'error', data, 'Request Token');
 }
 
 async function createAccessToken(tmpToken) {
@@ -19,9 +18,8 @@ async function createAccessToken(tmpToken) {
         ACCESS_TOKEN = data.access_token;
         setCookie("ACCOUNT_ID", ACCOUNT_ID);
         setCookie("ACCESS_TOKEN", ACCESS_TOKEN);
-
-        log('Token d\'accès créé avec succès', 'success', { account_id: ACCOUNT_ID, access_token: ACCESS_TOKEN }, 'Access Token');
-    } else log('Erreur lors de la création du token d\'accès', 'error', data, 'Access Token');
+    }
+    else log('Erreur lors de la création du token d\'accès', 'error', data, 'Access Token');
 }
 
 async function createSession() {
@@ -31,18 +29,15 @@ async function createSession() {
     if (data.success) {
         SESSION_ID = data.session_id;
         setCookie("SESSION_ID", SESSION_ID);
-
-        log('Session créée avec succès', 'success', { SESSION_ID }, 'Session ID');
-    } else log('Erreur lors de la création de la session', 'error', data, 'Session ID');
+    }
+    else log('Erreur lors de la création de la session', 'error', data, 'Session ID');
 }
 
 async function logoutRequest() {
 
     const data = await requestAuth('DELETE', 'https://api.themoviedb.org/4/auth/access_token', { access_token: ACCESS_TOKEN });
 
-    if (data.success) {
-        log('Utilisateur déconnecté avec succès :\n' + data.status_message , 'success', null, 'Logout Request');
-    } else log('Erreur lors de la déconnexion', 'error', data, 'Logout Request');
+    if (!data.success) log('Erreur lors de la déconnexion', 'error', data, 'Logout Request');
 
     return data;
 }
@@ -58,6 +53,8 @@ async function requestAuth(type, url, content) {
         });
 
         const data = await response.json();
+
+        log('Réponse de l\'authentification', 'succes', data, 'Authentification');
 
         return data;
 

@@ -1,9 +1,3 @@
-let cookies = {};
-
-let ACCOUNT_ID = "";
-let ACCESS_TOKEN = "";
-let SESSION_ID = "";
-
 async function getCookies() {
 
     if (!document.cookie) return log('Aucun cookie trouvé', 'failure', null, 'Cookies');
@@ -17,8 +11,6 @@ async function getCookies() {
             cookies[name] = decodeURIComponent(value);
         }
     }
-
-    log('Cookies récupérés avec succès', 'success', cookies, 'Cookies');
 }
 
 async function setCookie(name, value) {

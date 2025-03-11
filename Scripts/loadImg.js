@@ -183,11 +183,9 @@ async function loadPDP(pdp) {
     if (await loged()) {
 
         try {
-            const data = await request('GET', "https://api.themoviedb.org/3/account/{account_id}", { session_id: '' });
-            
-
+            await accountDetails();
             pdp.style.display = "none";
-            await loadImage(pdp, data.avatar.tmdb.avatar_path);
+            await loadImage(pdp, accountInfo[ACCOUNT_ID].avatar.tmdb.avatar_path);
 
             pdp.style.display = "initial";
             log("Avatar chargé avec succès!", 'success', null, 'PDP');

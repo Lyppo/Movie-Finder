@@ -2,8 +2,6 @@ async function showUserMenu(event) {
     event.target.removeEventListener("mouseenter", showUserMenu);
     event.target.parentElement.parentElement.addEventListener("mouseleave", DiscareUserMenu);
     document.getElementById("list").style.display = "grid";
-
-    log('Menu utilisateur affiché', 'success', null, 'UI');
 }
 
 async function DiscareUserMenu(event) {
@@ -11,8 +9,6 @@ async function DiscareUserMenu(event) {
     event.target.removeEventListener("mouseleave", DiscareUserMenu);
     document.getElementById("pdp").addEventListener("mouseenter", showUserMenu);
     document.getElementById("list").style.display = "none";
-
-    log('Menu utilisateur masqué', 'success', null, 'UI');
 }
 
 async function login(event) {
@@ -23,18 +19,17 @@ async function login(event) {
 
     const requestToken = await createRequestToken();
 
-    const authenticated= await openPopup(requestToken);
-
-    if (!authenticated) {
+    if (!await openPopup(requestToken)) {
         event.target.addEventListener("click", login);
         return log('Authentification échouée', 'failure', null, 'Login');
     }
 
     await createAccessToken(requestToken);
-    await createSession();
 
     userInterface.remove();
     createUserInterface(zenith);
+
+    await createSession();
 
     log('Connexion réussie, interface utilisateur mise à jour', 'success', null, 'Login');
 }
@@ -56,7 +51,12 @@ async function logout(event) {
 }
 
 async function test(event) {
+
+    console.clear();
+
     const name = event.target.id;
+
+    await testRequest();
 
     log(name, 'test', null, name);
 }

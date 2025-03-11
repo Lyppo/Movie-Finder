@@ -1,4 +1,7 @@
 async function logoutClear() {
+
+    authentifier = false;
+
     try {
         const sessionDeletion = await request(
             'DELETE',

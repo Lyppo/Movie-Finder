@@ -1,11 +1,30 @@
-async function request(type, url, params = {}, content = {}) {
-
-    let searchParams = new URLSearchParams(params);
-    url += searchParams.toString() ? `?${searchParams.toString()}` : "";
-
-    if (content.access_token) {
-        content.access_token = ACCESS_TOKEN;
+async function accountDetails(account_id = ACCOUNT_ID) {
+    if (!accountInfo[account_id] || Object.keys(accountInfo[account_id]).length === 0) {
+        accountInfo[account_id] = await request('GET', `https://api.themoviedb.org/3/account/${account_id}`, { session_id: SESSION_ID });
     }
+}
+
+async function testRequest() {
+    const data = await request('GET', "https://api.themoviedb.org/3/discover/movie", { language: "fr-FR", page: '1', sort_by: 'popularity.desc' });
+    const first = data.results[0];
+
+    let img = document.createElement("img");
+
+    img.style.width = "300px";
+    img.style.top = "50%";
+    img.style.left = "50%";
+    img.style.transform = "translate(-50%, -50%)";
+    img.style.boxShadow = "5px 5px 10px black";
+    img.style.borderRadius = "10px";
+
+    document.getElementById("zenith").appendChild(img);
+
+    loadImage(img, first.poster_path);
+}
+
+async function request(type, url, params = {}, content = {}) {
+    
+    url += `?${(new URLSearchParams(params)).toString()}`;
 
     try {
         log('Envoi de la requête', 'request', { type: type, url: url, params: params, content: content }, 'request');

@@ -1,5 +1,15 @@
 const DEBUG = true;
 
+let cookies = {};
+
+let ACCOUNT_ID = "";
+let ACCESS_TOKEN = "";
+let SESSION_ID = "";
+
+let accountInfo = {};
+
+let authentifier = false;
+
 const EMOJIS = {
     log: '📝',
     warn: '⚠️',
